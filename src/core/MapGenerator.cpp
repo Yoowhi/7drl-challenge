@@ -58,6 +58,16 @@ Map* MapGenerator::generate(int lvl, int width, int height) {
 Tile* MapGenerator::getTile(int x, int y) { return &map->tiles[x + y * map->width]; }
 
 void MapGenerator::createArea(int x1, int y1, int x2, int y2) {
+    if (x2 < x1) {
+        int tmp = x2;
+        x2 = x1;
+        x1 = tmp;
+    }
+    if (y2 < y1) {
+        int tmp = y2;
+        y2 = y1;
+        y1 = tmp;
+    }
     static const TCODColor floor(100, 100, 100);
     static const TCODColor wall(128, 128, 128);
     static const char* symbols = "'`.,";
