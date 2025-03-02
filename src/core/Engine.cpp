@@ -28,9 +28,7 @@ void Engine::renderMap() {
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
             Tile* tile = &map->tiles[x + y * map->width];
-            TCODConsole::root->setCharBackground(x, y, tile->backColor);
-            TCODConsole::root->setCharForeground(x, y, tile->backColor);
-            TCODConsole::root->setChar(x, y, tile->ch);
+            TCODConsole::root->putCharEx(x, y, tile->ch, tile->frontColor, tile->backColor);
         }
     }
 }

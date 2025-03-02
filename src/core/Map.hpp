@@ -1,5 +1,5 @@
 struct Tile {
-  char ch;
+  int ch;
   TCODColor frontColor;
   TCODColor backColor;
   bool explored;

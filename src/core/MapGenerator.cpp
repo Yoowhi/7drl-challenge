@@ -79,7 +79,7 @@ void MapGenerator::createArea(int x1, int y1, int x2, int y2) {
             tile->backColor = floor * mult;
             int symbolId = rng->getInt(0, 40);
             if (symbolId < 4) {
-                tile->frontColor = tile->backColor * 1.05f;
+                tile->frontColor = tile->backColor * 0.9f;
                 tile->ch = symbols[symbolId];
             }
             map->walkMap->setProperties(tileX, tileY, true, true);
