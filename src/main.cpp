@@ -1,5 +1,10 @@
 #include "libtcod.hpp"
-#include "core/Engine.hpp"
+#include "Controller.hpp"
+#include "PlayerController.hpp"
+#include "Entity.hpp"
+#include "Action.hpp"
+#include "ActionQueue.hpp"
+#include "Engine.hpp"
 
 Engine engine(80, 50);
 

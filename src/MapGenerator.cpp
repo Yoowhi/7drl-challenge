@@ -1,4 +1,6 @@
 #include "libtcod.hpp"
+#include "Controller.hpp"
+#include "Entity.hpp"
 #include "Map.hpp"
 #include "MapGenerator.hpp"
 
@@ -18,11 +20,14 @@ class BspListener : public ITCODBspCallback {
             x = rng->getInt(node->x + 1, node->x + node->w - w - 1);
             y = rng->getInt(node->y + 1, node->y + node->h - h - 1);
             gen.createArea(x, y, x + w - 1, y + h - 1);
-            gen.createCreatures(x, y, x + w - 1, y + h - 1);
             gen.createLoot(x, y, x + w - 1, y + h - 1);
             if (roomNum != 0) {
+                gen.createCreatures(x, y, x + w - 1, y + h - 1);
                 gen.createArea(lastX, lastY, x + w / 2, lastY);
                 gen.createArea(x + w / 2, lastY, x + w / 2, y + h / 2);
+            } else {
+                gen.map->enterX = x + w / 2;
+                gen.map->enterY = y + h / 2;
             }
             lastX = x + w / 2;
             lastY = y + h / 2;
@@ -77,9 +82,11 @@ void MapGenerator::createArea(int x1, int y1, int x2, int y2) {
             TCODRandom* rng = TCODRandom::getInstance();
             float mult = rng->getFloat(0.9f, 1.0f);
             tile->backColor = floor * mult;
+            tile->backColorFaded = tile->backColor * 0.5f;
             int symbolId = rng->getInt(0, 40);
             if (symbolId < 4) {
                 tile->frontColor = tile->backColor * 0.9f;
+                tile->frontColorFaded = tile->frontColor * 0.5f;
                 tile->ch = symbols[symbolId];
             }
             map->walkMap->setProperties(tileX, tileY, true, true);
