@@ -9,8 +9,8 @@
 
 IdleAction::IdleAction(Entity* actor) : Action() {
     this->actor = actor;
-    this->priority = 50;
-    this->priorityLeft = 50;
+    this->time = 50;
+    this->timeLeft = 50;
 }
 
 void IdleAction::execute() {}

@@ -22,6 +22,7 @@ class Map {
         void enter(Entity* entity);
         void exit(Entity* entity);
         bool canWalk(int x, int y);
+        Tile* getTile(int x, int y);
 
     private:
         friend class MapGenerator;

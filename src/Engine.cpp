@@ -1,5 +1,6 @@
 #include "libtcod.hpp"
 #include "Controller.hpp"
+#include "Being.hpp"
 #include "Entity.hpp"
 #include "PlayerController.hpp"
 #include "Map.hpp"
@@ -14,6 +15,7 @@ Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), sc
     TCODConsole::initRoot(80, 50, "kek", false);
     player = new Entity(0, 0, '@', TCODColor::white, "Hero", true);
     player->controller = new PlayerController(player);
+    player->being = new Being(player, 50, 2);
     map = MapGenerator::generate(1, 80, 50);
     map->enter(player);
     computeFOV();
@@ -66,7 +68,7 @@ void Engine::render() {
 void Engine::renderMap() {
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
-            Tile* tile = &map->tiles[x + y * map->width];
+            Tile* tile = map->getTile(x, y);
             if (isInFOV(x, y)) {
                 TCODConsole::root->putCharEx(x, y, tile->ch, tile->frontColor, tile->backColor);
             } else if (isExplored(x, y)) {
@@ -103,4 +105,17 @@ bool Engine::isInFOV(int x, int y) {
         return true;
     }
     return false;
+}
+
+/**
+ * @returns possibly NULL
+ */
+Entity* Engine::getAliveEntityByCoord(int x, int y) {
+    for(Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
+        Entity* entity = *iter;
+        if ( entity->isAlive() > 0 && entity->x == x && entity->y == y) {
+            return entity;
+        }
+    }
+    return NULL;
 }

@@ -9,8 +9,8 @@
 
 MoveAction::MoveAction(Entity* actor, int x, int y) : Action() {
     this->actor = actor;
-    this->priority = 50;
-    this->priorityLeft = 50;
+    this->time = 50;
+    this->timeLeft = 50;
     this->x = x;
     this->y = y;
 }

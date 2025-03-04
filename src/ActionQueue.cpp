@@ -16,7 +16,7 @@ void ActionQueue::add(Action* action) {
     bool found = false;
     for (Action** iter = actions.begin(); iter != actions.end(); iter++) {
         Action* queueElement = *iter;
-        if (action->priority >= queueElement->priorityLeft) {
+        if (action->time >= queueElement->timeLeft) {
             found = true;
             break;
         }
@@ -47,7 +47,7 @@ Action* ActionQueue::next() {
     Action* action = actions.pop();
     for (Action** iter = actions.begin(); iter < actions.end(); iter++) {
         Action* queueElement = *iter;
-        queueElement->priorityLeft -= action->priority;
+        queueElement->timeLeft -= action->time;
     }
     return action;
 }

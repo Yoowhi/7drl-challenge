@@ -21,6 +21,7 @@ class Engine {
         void start();
         bool isExplored(int x, int y) const;
         bool isInFOV(int x, int y);
+        Entity* getAliveEntityByCoord(int x, int y);
 
     protected:
         void update();
