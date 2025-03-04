@@ -10,6 +10,7 @@
 MoveAction::MoveAction(Entity* actor, int x, int y) : Action() {
     this->actor = actor;
     this->priority = 50;
+    this->priorityLeft = 50;
     this->x = x;
     this->y = y;
 }
@@ -18,5 +19,9 @@ void MoveAction::execute() {
     if (engine.map->canWalk(x, y)) {
         actor->x = x;
         actor->y = y;
+    } else if (engine.map->canWalk(actor->x, y)) {
+        actor->y = y;
+    } else if (engine.map->canWalk(x, actor->y)) {
+        actor->x = x;
     }
 }

@@ -1,6 +1,7 @@
 #include "libtcod.hpp"
 #include "Controller.hpp"
 #include "Entity.hpp"
+#include "Creatures.hpp"
 #include "Map.hpp"
 #include "MapGenerator.hpp"
 
@@ -94,6 +95,18 @@ void MapGenerator::createArea(int x1, int y1, int x2, int y2) {
     }
 }
 
-void MapGenerator::createCreatures(int x1, int y1, int x2, int y2) {}
+void MapGenerator::createCreatures(int x1, int y1, int x2, int y2) {
+    TCODRandom* rng = TCODRandom::getInstance();
+    int monsters = rng->getInt(0, 4);
+    for (int i = 0; i < monsters; i++) {
+        int randX = rng->getInt(x1, x2);
+        int randY = rng->getInt(y1, y2);
+        if (map->canWalk(randX, randY)) {
+            Entity* creature = Creatures::randomCreature(lvl, randX, randY);
+            map->entities.push(creature);
+        }
+    }
+
+}
 
 void MapGenerator::createLoot(int x1, int y1, int x2, int y2) {}

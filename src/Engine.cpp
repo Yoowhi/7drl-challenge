@@ -18,6 +18,11 @@ Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), sc
     map->enter(player);
     computeFOV();
     actions = new ActionQueue();
+    // initialize actions
+    for(Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
+        Entity* entity = *iter;
+        entity->update();
+    }
 }
 
 Engine::~Engine() {
@@ -49,6 +54,7 @@ void Engine::update() {
     } else {
         action->actor->update();
     }
+    delete action;
 }
 
 void Engine::render() {
