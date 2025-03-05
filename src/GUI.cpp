@@ -8,7 +8,7 @@
 #include "Engine.hpp"
 #include "GUI.hpp"
 
-static const int PANEL_HEIGHT = 7;
+static const int PANEL_HEIGHT = 8;
 static const int BAR_WIDTH = 20;
 static const int MSG_X = 50;
 static const int MSG_HEIGHT = PANEL_HEIGHT - 1;
@@ -39,7 +39,9 @@ void GUI::render() {
     console->rect(0, 0, engine.screenWidth, 1, false, TCOD_BKGND_SET);
     console->setDefaultBackground(TCODColor::black);
 
-    renderBar(1, 2, BAR_WIDTH, engine.player->being->hp, engine.player->being->maxHp, TCODColor::red, TCODColor::darkestRed);
+    renderBar(1, 2, BAR_WIDTH, (int)engine.player->being->hp, (int)engine.player->being->getMaxHp(), TCODColor::darkRed, TCODColor::darkestRed);
+    renderBar(1, 4, BAR_WIDTH, (int)engine.player->being->stamina, (int)engine.player->being->getMaxStamina(), TCODColor::darkGreen, TCODColor::darkestGreen);
+    renderBar(1, 6, BAR_WIDTH, engine.player->being->xp, engine.player->being->getMaxXp(), TCODColor::darkSky, TCODColor::darkestSky);
     int y = 1;
     float colorCoef = 1.0f;
     for (Message** iterator = messages.begin(); iterator != messages.end(); iterator++) {

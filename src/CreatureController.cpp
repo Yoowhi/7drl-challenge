@@ -2,6 +2,7 @@
 #include "Controller.hpp"
 #include "CreatureController.hpp"
 #include "Entity.hpp"
+#include "Being.hpp"
 #include "Action.hpp"
 #include "actions/MoveAction.hpp"
 #include "actions/IdleAction.hpp"

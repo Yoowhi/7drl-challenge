@@ -6,7 +6,7 @@
 #include "ActionQueue.hpp"
 #include "Engine.hpp"
 
-Engine engine(80, 50);
+Engine engine(90, 70);
 
 int main(int argc, char const* argv[]) {
 	engine.start();

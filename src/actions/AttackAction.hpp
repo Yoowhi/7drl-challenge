@@ -7,5 +7,6 @@ class AttackAction : public Action {
 
     private:
         int getTargetDefence(Entity* target);
-        int getAttackerDamage(Entity* attacker);
+        float getAttackerDamage(Entity* attacker, float staminaCost);
+        float getStaminaCost(Entity* attacker);
 };

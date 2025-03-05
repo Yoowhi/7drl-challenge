@@ -2,15 +2,15 @@
 #include "../Controller.hpp"
 #include "../Action.hpp"
 #include "../Entity.hpp"
+#include "../Being.hpp"
 #include "../Map.hpp"
 #include "../ActionQueue.hpp"
 #include "../Engine.hpp"
 #include "IdleAction.hpp"
 
-IdleAction::IdleAction(Entity* actor) : Action() {
-    this->actor = actor;
-    this->time = 50;
-    this->timeLeft = 50;
+IdleAction::IdleAction(Entity* actor) : Action(actor, 100) {
 }
 
-void IdleAction::execute() {}
+void IdleAction::execute() {
+    actor->being->restoreStamina(this->time);
+}

@@ -13,11 +13,23 @@
 static const int FOV_RADIUS = 10;
 
 Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0) {
-    TCODConsole::initRoot(80, 50, "kek", false);
+    TCODConsole::initRoot(screenWidth, screenHeight, "kek", false);
     player = new Entity(0, 0, '@', TCODColor::white, "Hero", true);
     player->controller = new PlayerController(player);
-    player->being = new Being(player, 50, 2);
-    map = MapGenerator::generate(1, 80, 43);
+    player->being = new Being(
+        player,
+        1, // lvl,
+        50, // baseHp,
+        50, // baseStamina,
+        10, // strength,
+        10, // health,
+        10, // agility,
+        10, // endurance
+        1
+    );
+    player->being->updateHp(player->being->getMaxHp());
+    player->being->updateStamina(player->being->getMaxStamina());
+    map = MapGenerator::generate(1, 90, 62);
     map->enter(player);
     gui = new GUI();
     computeFOV();
@@ -89,7 +101,7 @@ void Engine::renderMap() {
 }
 
 void Engine::renderEntities() {
-    for(Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
+    for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
         Entity* entity = *iter;
         if (isInFOV(entity->x, entity->y)) {
             TCODConsole::root->setChar(entity->x, entity->y, entity->symbol);
@@ -107,7 +119,7 @@ bool Engine::isExplored(int x, int y) const {
 }
 
 bool Engine::isInFOV(int x, int y) {
-    if ( x < 0 || x >= map->width || y < 0 || y >= map->height ) {
+    if (x < 0 || x >= map->width || y < 0 || y >= map->height) {
         return false;
     }
     if (map->walkMap->isInFov(x, y)) {
@@ -121,9 +133,9 @@ bool Engine::isInFOV(int x, int y) {
  * @returns possibly NULL
  */
 Entity* Engine::getAliveEntityByCoord(int x, int y) {
-    for(Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
+    for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
         Entity* entity = *iter;
-        if ( entity->isAlive() && entity->x == x && entity->y == y) {
+        if (entity->isAlive() && entity->x == x && entity->y == y) {
             return entity;
         }
     }

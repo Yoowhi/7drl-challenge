@@ -10,10 +10,7 @@
 #include "../Engine.hpp"
 #include "AttackAction.hpp"
 
-AttackAction::AttackAction(Entity* actor, int x, int y) : Action() {
-    this->actor = actor;
-    this->time = 50;
-    this->timeLeft = 50;
+AttackAction::AttackAction(Entity* actor, int x, int y) : Action(actor, 100) {
     this->x = x;
     this->y = y;
 }
@@ -24,26 +21,37 @@ void AttackAction::execute() {
         engine.gui->message(TCODColor::white, "%s missed", actor->name);
         return;
     }
-    int defence = getTargetDefence(target);
-    int damage = getAttackerDamage(actor);
     // damage calculation
-    int resultingDamage = damage - defence;
+    float defence = getTargetDefence(target);
+    float staminaCost = getStaminaCost(actor);
+    float damage = getAttackerDamage(actor, staminaCost);
+    float resultingDamage = damage - defence;
     if (resultingDamage < 0) {
         resultingDamage = 0;
     }
     // damage applying
-    target->being->hp -= resultingDamage;
-    engine.gui->message(TCODColor::white, "%s deals %s %u damage", actor->name, target->name, resultingDamage);
-    if (target->being->hp <= 0) {
-        target->being->hp = 0;
-        target->being->die();
+    engine.gui->message(TCODColor::white, "%s deals %s %u damage", actor->name, target->name, (int)resultingDamage);
+    target->being->updateHp(-resultingDamage);
+    if (!target->isAlive()) {
+        actor->being->addXp(target->being->getXpForKill());
     }
+    actor->being->updateStamina(-staminaCost);
 }
 
 int AttackAction::getTargetDefence(Entity* target) {
-    return target->being->defence;
+    return 0;
 }
 
-int AttackAction::getAttackerDamage(Entity* attacker) {
-    return 5;
+float AttackAction::getStaminaCost(Entity* attacker) {
+    return 8.0f;
+}
+
+float AttackAction::getAttackerDamage(Entity* attacker, float staminaCost) {
+    float dmg = 5.0f * attacker->being->getDamageMultiplier();
+    float currentStamina = attacker->being->stamina;
+    if (staminaCost > currentStamina) {
+        // ratio
+        dmg *= currentStamina / staminaCost;
+    }
+    return dmg;
 }

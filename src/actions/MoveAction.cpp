@@ -2,15 +2,13 @@
 #include "../Controller.hpp"
 #include "../Action.hpp"
 #include "../Entity.hpp"
+#include "../Being.hpp"
 #include "../Map.hpp"
 #include "../ActionQueue.hpp"
 #include "../Engine.hpp"
 #include "MoveAction.hpp"
 
-MoveAction::MoveAction(Entity* actor, int x, int y) : Action() {
-    this->actor = actor;
-    this->time = 50;
-    this->timeLeft = 50;
+MoveAction::MoveAction(Entity* actor, int x, int y) : Action(actor, 100) {
     this->x = x;
     this->y = y;
 }
@@ -24,4 +22,5 @@ void MoveAction::execute() {
     } else if (engine.map->canWalk(x, actor->y)) {
         actor->x = x;
     }
+    actor->being->restoreStamina(this->time);
 }
