@@ -1,10 +1,12 @@
 class Map;
+class GUI;
 
 class Engine {
     public:
         enum State {
             INPUT,
             TURN,
+            GAME_OVER,
         } state;
         int screenWidth, screenHeight;
         int fovRadius;
@@ -12,8 +14,9 @@ class Engine {
         Entity* player;
         TCOD_key_t lastKey;
         TCOD_mouse_t mouse;
+        int mouseCellX, mouseCellY;
         ActionQueue* actions;
-        void computeFOV();
+        GUI* gui;
 
         Engine(int screenWidth, int screenHeight);
         ~Engine();
@@ -21,6 +24,7 @@ class Engine {
         void start();
         bool isExplored(int x, int y) const;
         bool isInFOV(int x, int y);
+        void computeFOV();
         Entity* getAliveEntityByCoord(int x, int y);
 
     protected:

@@ -8,16 +8,18 @@
 #include "Action.hpp"
 #include "ActionQueue.hpp"
 #include "Engine.hpp"
+#include "GUI.hpp"
 
 static const int FOV_RADIUS = 10;
 
-Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS) {
+Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0) {
     TCODConsole::initRoot(80, 50, "kek", false);
     player = new Entity(0, 0, '@', TCODColor::white, "Hero", true);
     player->controller = new PlayerController(player);
     player->being = new Being(player, 50, 2);
-    map = MapGenerator::generate(1, 80, 50);
+    map = MapGenerator::generate(1, 80, 43);
     map->enter(player);
+    gui = new GUI();
     computeFOV();
     actions = new ActionQueue();
     // initialize actions
@@ -30,6 +32,7 @@ Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), sc
 Engine::~Engine() {
     delete map;
     delete actions;
+    delete gui;
 }
 
 void Engine::start() {
@@ -41,6 +44,12 @@ void Engine::start() {
 
 void Engine::update() {
     TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &lastKey, &mouse);
+
+    static const int CELL_WIDTH = 12;
+    static const int CELL_HEIGHT = 16;
+    mouseCellX = mouse.x / CELL_WIDTH;
+    mouseCellY = mouse.y / CELL_HEIGHT;
+
     if (state == INPUT) {
         player->update();
         return;
@@ -62,6 +71,7 @@ void Engine::update() {
 void Engine::render() {
     renderMap();
     renderEntities();
+    gui->render();
     TCODConsole::flush();
 }
 
@@ -113,7 +123,7 @@ bool Engine::isInFOV(int x, int y) {
 Entity* Engine::getAliveEntityByCoord(int x, int y) {
     for(Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
         Entity* entity = *iter;
-        if ( entity->isAlive() > 0 && entity->x == x && entity->y == y) {
+        if ( entity->isAlive() && entity->x == x && entity->y == y) {
             return entity;
         }
     }

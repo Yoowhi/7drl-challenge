@@ -6,6 +6,7 @@
 #include "../Entity.hpp"
 #include "../Map.hpp"
 #include "../ActionQueue.hpp"
+#include "../GUI.hpp"
 #include "../Engine.hpp"
 #include "AttackAction.hpp"
 
@@ -20,6 +21,7 @@ AttackAction::AttackAction(Entity* actor, int x, int y) : Action() {
 void AttackAction::execute() {
     Entity* target = engine.getAliveEntityByCoord(x, y);
     if (!target) {
+        engine.gui->message(TCODColor::white, "%s missed", actor->name);
         return;
     }
     int defence = getTargetDefence(target);
@@ -31,7 +33,8 @@ void AttackAction::execute() {
     }
     // damage applying
     target->being->hp -= resultingDamage;
-    if (target->being->hp < 0) {
+    engine.gui->message(TCODColor::white, "%s deals %s %u damage", actor->name, target->name, resultingDamage);
+    if (target->being->hp <= 0) {
         target->being->hp = 0;
         target->being->die();
     }
