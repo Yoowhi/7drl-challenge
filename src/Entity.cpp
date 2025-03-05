@@ -4,7 +4,10 @@
 #include "Entity.hpp"
 
 Entity::Entity(int x, int y, int symbol, TCODColor color, char* name, bool blocks)
-    : x(x), y(y), symbol(symbol), color(color), name(name), blocks(blocks) {}
+    : x(x), y(y), symbol(symbol), color(color), blocks(blocks) {
+        this->name = new char[strlen(name)];
+        name = strcpy(this->name, name);
+    }
 
 Entity::~Entity() {
     delete[] name;

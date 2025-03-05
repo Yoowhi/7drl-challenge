@@ -20,10 +20,13 @@ void Being::die() {
     tile->backColorFaded = TCODColor::darkestRed;
     engine.gui->message(TCODColor::white, "%s died", owner->name);
 
-    // char* newName = new char[strlen(owner->name) + 5 + 1]; // "dead " = 5
-    // strcpy(newName, owner->name);
-    // strcat(newName, "dead ");
-    // delete[] owner->name;
-    // owner->name = newName;
+    const char* prefix = "dead ";
+    size_t newLength = strlen(prefix) + strlen(owner->name) + 1; // +1 for null terminator
+    char* newName = new char[newLength];
+    strcpy(newName, prefix);
+    strcat(newName, owner->name);
+    delete[] owner->name;
+    owner->name = newName;
+
     engine.actions->clearFromActor(owner);
 }
