@@ -8,9 +8,13 @@ EquipAction::EquipAction(Entity* actor, EquipmentItem* item) : Action(actor, 100
 
 void EquipAction::execute() {
     actor->inventory->remove(item);
-    if (item) {
-        EquipmentItem* extractedItem = actor->being->equipment.swapItem(item);
-        actor->inventory->putIn(extractedItem);
+    EquipmentItem* extractedItem = actor->being->equipment.swapItem(item);
+    if (extractedItem) {
+        bool puttedIn = actor->inventory->putIn(extractedItem);
+        if (!puttedIn) {
+            throw std::runtime_error("No place for extracted equipmend during EquipAction");
+        }
     }
+
     actor->being->restoreStamina(this->time);
 }

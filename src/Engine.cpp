@@ -12,7 +12,7 @@
 static const int FOV_RADIUS = 10;
 
 Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0) {
-    TCODConsole::initRoot(screenWidth, screenHeight, "kek", false);
+    TCODConsole::initRoot(screenWidth, screenHeight, "kek", true, TCOD_RENDERER_SDL);
     player = new Entity(0, 0, '@', TCODColor::white, "Hero", true);
     player->controller = new PlayerController(player);
     player->being = new Being(
@@ -29,7 +29,7 @@ Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), sc
     player->being->updateHp(player->being->getMaxHp());
     player->being->updateStamina(player->being->getMaxStamina());
     map = MapGenerator::generate(1, 90, 62);
-    map->enter(player);
+    map->enterFromUp(player);
     gui = new GUI();
     computeFOV();
     actions = new ActionQueue();
@@ -55,11 +55,12 @@ void Engine::start() {
 
 void Engine::update() {
     TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &lastKey, &mouse);
-
-    static const int CELL_WIDTH = 12;
-    static const int CELL_HEIGHT = 16;
-    mouseCellX = mouse.x / CELL_WIDTH;
-    mouseCellY = mouse.y / CELL_HEIGHT;
+    int windowWidth, windowHeight;
+    TCODSystem::getCurrentResolution(&windowWidth, &windowHeight);
+    int cellWidth = windowWidth / screenWidth;
+    int cellHeight = windowHeight / screenHeight;
+    mouseCellX = mouse.x / cellWidth;
+    mouseCellY = mouse.y / cellHeight;
 
     if (state == INPUT) {
         player->update();
@@ -135,6 +136,32 @@ Entity* Engine::getAliveEntityByCoord(int x, int y) {
     for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
         Entity* entity = *iter;
         if (entity->isAlive() && entity->x == x && entity->y == y) {
+            return entity;
+        }
+    }
+    return NULL;
+}
+
+/**
+ * @returns possibly NULL
+ */
+Entity* Engine::getItemEntityByCoord(int x, int y) {
+    for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
+        Entity* entity = *iter;
+        if (entity->item && entity->x == x && entity->y == y) {
+            return entity;
+        }
+    }
+    return NULL;
+}
+
+/**
+ * @returns possibly NULL
+ */
+Entity* Engine::getStairsEntityByCoord(int x, int y) {
+    for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
+        Entity* entity = *iter;
+        if (entity->stairs && entity->x == x && entity->y == y) {
             return entity;
         }
     }

@@ -50,6 +50,13 @@ void GUI::render() {
         }
     }
     renderMouseLook();
+    console->setDefaultForeground(TCODColor::white);
+    console->print(0, 7, "%u", TCODSystem::getFps());
+    console->print(6, 7, "%u:%u", engine.mouseCellX, engine.mouseCellY);
+    console->print(16, 7, "%u:%u", engine.mouse.x, engine.mouse.y);
+    int windowWidth, windowHeight;
+    TCODSystem::getCurrentResolution(&windowWidth, &windowHeight);
+    console->print(26, 7, "%u:%u", windowWidth, windowHeight);
     TCODConsole::blit(console, 0, 0, engine.screenWidth, PANEL_HEIGHT, TCODConsole::root, 0, engine.screenHeight - PANEL_HEIGHT);
 }
 

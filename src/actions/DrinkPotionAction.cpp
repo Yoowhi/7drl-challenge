@@ -10,4 +10,6 @@ void DrinkPotionAction::execute() {
     actor->inventory->remove(item);
     actor->being->updateHp(item->hp);
     actor->being->updateStamina(item->stamina);
+    actor->being->restoreStamina(time);
+    delete item->owner;
 }

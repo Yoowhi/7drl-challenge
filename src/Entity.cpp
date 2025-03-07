@@ -10,6 +10,11 @@ Entity::Entity(int x, int y, int symbol, TCODColor color, char* name, bool block
 
 Entity::~Entity() {
     delete[] name;
+    if (controller) delete controller;
+    if (being) delete being;
+    if (inventory) delete inventory;
+    if (item) delete item;
+    if (stairs) delete stairs;
 }
 
 void Entity::update() {

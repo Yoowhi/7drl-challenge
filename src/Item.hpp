@@ -5,7 +5,6 @@ class Action;
 class Item {
     public:
         Entity* owner;
-        Entity* wearer;
 
         Item(Entity* owner);
 

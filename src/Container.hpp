@@ -5,13 +5,16 @@ class Item;
 class Container {
     public:
         Entity* owner;
-        Item* items[10];
+        static const int CONTAINER_SIZE = 6;
+        Item* items[CONTAINER_SIZE];
 
         Container(Entity* owner);
+        ~Container();
         bool putIn(Item* item);
-        Item* getOut(int id);
         void remove(Item* item);
+        Item* getItem(int id);
 
     private:
-        static const int CONTAINER_SIZE = 10;
+        Item* getOut(int id);
+
 };

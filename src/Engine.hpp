@@ -10,6 +10,8 @@ class Engine {
         enum State {
             INPUT,
             TURN,
+            UPSTAIRS,
+            DOWNSTAIRS,
             GAME_OVER,
         } state;
         int screenWidth, screenHeight;
@@ -30,6 +32,8 @@ class Engine {
         bool isInFOV(int x, int y);
         void computeFOV();
         Entity* getAliveEntityByCoord(int x, int y);
+        Entity* getItemEntityByCoord(int x, int y);
+        Entity* getStairsEntityByCoord(int x, int y);
 
     protected:
         void update();

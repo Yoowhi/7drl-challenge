@@ -9,10 +9,16 @@ Map::~Map() {
     entities.clearAndDelete();
 }
 
-void Map::enter(Entity* entity) {
+void Map::enterFromUp(Entity* entity) {
     entities.push(entity);
-    entity->x = enterX;
-    entity->y = enterY;
+    entity->x = upX;
+    entity->y = upY;
+}
+
+void Map::enterFromDown(Entity* entity) {
+    entities.push(entity);
+    entity->x = downX;
+    entity->y = downY;
 }
 
 void Map::exit(Entity* entity) {

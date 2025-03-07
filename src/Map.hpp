@@ -18,13 +18,15 @@ class Map {
     public:
         ~Map();
         int width, height;
-        int enterX, enterY;
+        int upX, upY;
+        int downX, downY;
         int lvl;
         Tile* tiles;
         TCODList<Entity*> entities;
         TCODMap* walkMap;
 
-        void enter(Entity* entity);
+        void enterFromUp(Entity* entity);
+        void enterFromDown(Entity* entity);
         void exit(Entity* entity);
         bool canWalk(int x, int y);
         Tile* getTile(int x, int y);
