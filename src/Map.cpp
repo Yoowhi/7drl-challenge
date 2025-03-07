@@ -1,6 +1,3 @@
-#include "libtcod.hpp"
-#include "Controller.hpp"
-#include "Entity.hpp"
 #include "Map.hpp"
 
 Map::Map() {}

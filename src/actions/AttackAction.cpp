@@ -1,16 +1,7 @@
 #include "libtcod.hpp"
-#include <stdexcept>
-#include "../Controller.hpp"
-#include "../Being.hpp"
-#include "../Action.hpp"
-#include "../Entity.hpp"
-#include "../Map.hpp"
-#include "../ActionQueue.hpp"
-#include "../GUI.hpp"
+#include "AttackAction.hpp"
 #include "../Engine.hpp"
 #include "../items/EquipmentItem.hpp"
-#include "../Equipment.hpp"
-#include "AttackAction.hpp"
 
 AttackAction::AttackAction(Entity* actor, int x, int y) : Action(actor, 100), x(x), y(y) {}
 

@@ -1,3 +1,10 @@
+#pragma once
+#include "libtcod.hpp"
+#include "Controller.hpp"
+#include "Being.hpp"
+#include "Container.hpp"
+#include "Item.hpp"
+class Controller;
 class Being;
 class Container;
 class Item;

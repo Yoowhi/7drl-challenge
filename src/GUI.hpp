@@ -1,3 +1,6 @@
+#pragma once
+#include "libtcod.hpp"
+
 class GUI {
     public:
         GUI();

@@ -1,13 +1,8 @@
 #include "libtcod.hpp"
-#include "Controller.hpp"
+#include "utility.hpp"
 #include "Being.hpp"
-#include "Entity.hpp"
-#include "Map.hpp"
-#include "Action.hpp"
-#include "ActionQueue.hpp"
-#include "GUI.hpp"
 #include "Engine.hpp"
-#include "Equipment.hpp"
+#include "Map.hpp"
 
 static const int POINTS_PER_LVL = 3;
 static const int HP_PER_HEALTH_POINT = 2;
@@ -100,9 +95,8 @@ void Being::autoIncreaseAttributes(int lvlUps, int priorityStrength, int priorit
     int sum = priorityStrength + priorityHealth + priorityAgility + priorityEndurance;
     priorityHealth = priorityStrength + priorityHealth;
     priorityAgility = priorityStrength + priorityHealth + priorityAgility;
-    TCODRandom* rng = TCODRandom::getInstance();
     for (int i = 0; i < points; i++) {
-        int number = rng->getInt(0, sum);
+        int number = rnd(0, sum);
         if (number < priorityStrength) {
             strength++;
         } else if (number < priorityHealth) {
@@ -135,15 +129,9 @@ void Being::die() {
     tile->backColor = TCODColor::darkerRed;
     tile->backColorFaded = TCODColor::darkestRed;
     engine.gui->message(TCODColor::white, "%s died", owner->name);
-
-    const char* prefix = "dead ";
-    size_t newLength = strlen(prefix) + strlen(owner->name) + 1; // +1 for null terminator
-    char* newName = new char[newLength];
-    strcpy(newName, prefix);
-    strcat(newName, owner->name);
+    char* newName = concatenate("dead ", owner->name);
     delete[] owner->name;
     owner->name = newName;
-
     engine.actions->clearFromActor(owner);
 }
 

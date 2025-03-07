@@ -1,3 +1,8 @@
+#pragma once
+#include "Entity.hpp"
+#include "items/EquipmentItem.hpp"
+class Entity;
+
 class ItemFactory {
     public:
         struct Metal {

@@ -1,19 +1,6 @@
-#include "libtcod.hpp"
 #include "utility.hpp"
-#include "Controller.hpp"
-#include "Action.hpp"
-#include "Entity.hpp"
-#include "Equipment.hpp"
-#include "Being.hpp"
-#include "Map.hpp"
-#include "ActionQueue.hpp"
-#include "Engine.hpp"
-#include "items/EquipmentItem.hpp"
-#include "items/PotionItem.hpp"
-#include "Container.hpp"
-#include "Item.hpp"
 #include "ItemFactory.hpp"
-#include <stdexcept>
+#include "items/PotionItem.hpp"
 
 Entity* ItemFactory::createItem(int lvl, int x, int y) {
     int lvlModifier = rnd(0, 3);

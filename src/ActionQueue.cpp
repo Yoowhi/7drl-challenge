@@ -1,5 +1,3 @@
-#include "libtcod.hpp"
-#include "Action.hpp"
 #include "ActionQueue.hpp"
 
 ActionQueue::ActionQueue() {}

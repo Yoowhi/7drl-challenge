@@ -1,14 +1,8 @@
-#include "libtcod.hpp"
-#include "Controller.hpp"
-#include "Being.hpp"
-#include "Entity.hpp"
-#include "PlayerController.hpp"
-#include "Map.hpp"
-#include "MapGenerator.hpp"
-#include "Action.hpp"
-#include "ActionQueue.hpp"
 #include "Engine.hpp"
-#include "GUI.hpp"
+#include "PlayerController.hpp"
+#include "Being.hpp"
+#include "MapGenerator.hpp"
+
 
 static const int FOV_RADIUS = 10;
 

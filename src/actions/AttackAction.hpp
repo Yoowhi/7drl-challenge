@@ -1,3 +1,8 @@
+#pragma once
+#include "../Action.hpp"
+#include "../Entity.hpp"
+class Entity;
+
 class AttackAction : public Action {
     public:
         int x, y;

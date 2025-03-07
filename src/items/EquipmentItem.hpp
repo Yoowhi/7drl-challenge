@@ -1,3 +1,9 @@
+#pragma once
+#include "../Item.hpp"
+#include "../Action.hpp"
+#include "../Entity.hpp"
+class Action;
+
 class EquipmentItem : public Item {
     public:
         enum Type {

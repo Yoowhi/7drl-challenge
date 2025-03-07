@@ -1,3 +1,8 @@
+#pragma once
+#include "Map.hpp"
+class Map;
+class Tile;
+
 class MapGenerator {
     public:
         static Map* generate(int lvl, int width, int height);

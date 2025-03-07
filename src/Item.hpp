@@ -1,3 +1,9 @@
+#pragma once
+#include "Entity.hpp"
+#include "Action.hpp"
+class Entity;
+class Action;
+
 class Item {
     public:
         Entity* owner;

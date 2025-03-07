@@ -1,3 +1,6 @@
+#pragma once
+#include "Entity.hpp"
+#include "Equipment.hpp"
 class Entity;
 
 class Being {

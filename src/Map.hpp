@@ -1,3 +1,9 @@
+#pragma once
+#include "libtcod.hpp"
+#include "Entity.hpp"
+#include "MapGenerator.hpp"
+class Entity;
+
 struct Tile {
   int ch;
   TCODColor frontColor;

@@ -1,12 +1,5 @@
-#include "libtcod.hpp"
-#include "Controller.hpp"
-#include "Being.hpp"
-#include "Entity.hpp"
-#include "Map.hpp"
-#include "Action.hpp"
-#include "ActionQueue.hpp"
-#include "Engine.hpp"
 #include "GUI.hpp"
+#include "Engine.hpp"
 
 static const int PANEL_HEIGHT = 8;
 static const int BAR_WIDTH = 20;

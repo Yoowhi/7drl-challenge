@@ -1,3 +1,10 @@
+#pragma once
+#include "Map.hpp"
+#include "Entity.hpp"
+#include "libtcod.hpp"
+#include "ActionQueue.hpp"
+#include "GUI.hpp"
+class Entity;
 class Map;
 class GUI;
 

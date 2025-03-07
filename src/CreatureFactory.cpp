@@ -1,14 +1,8 @@
 #include "libtcod.hpp"
-#include "Controller.hpp"
+#include "CreatureFactory.hpp"
 #include "CreatureController.hpp"
 #include "Being.hpp"
-#include "Entity.hpp"
-#include "CreatureFactory.hpp"
 
-
-// несколько архетипов нпц - ловкач, танк, дамагер, босс
-// архетип задает приоритет аттрибутов
-// лвл задает расу
 
 Entity* CreatureFactory::randomCreature(int lvl, int x, int y) {
     TCODRandom* rng = TCODRandom::getInstance();

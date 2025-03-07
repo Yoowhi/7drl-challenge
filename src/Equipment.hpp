@@ -1,3 +1,7 @@
+#pragma once
+#include "items/EquipmentItem.hpp"
+class Entity;
+
 class Equipment {
     public:
         Entity* owner;

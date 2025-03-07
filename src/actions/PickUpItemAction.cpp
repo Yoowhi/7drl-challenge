@@ -1,16 +1,5 @@
-#include "libtcod.hpp"
-#include "../Controller.hpp"
-#include "../Action.hpp"
-#include "../Entity.hpp"
-#include "../Equipment.hpp"
-#include "../Being.hpp"
-#include "../Map.hpp"
-#include "../ActionQueue.hpp"
-#include "../Engine.hpp"
-#include "../Item.hpp"
-#include "../items/EquipmentItem.hpp"
-#include "../Container.hpp"
 #include "PickUpItemAction.hpp"
+#include "../Engine.hpp"
 
 PickUpItemAction::PickUpItemAction(Entity* actor, Item* item) : Action(actor, 100), item(item) {}
 

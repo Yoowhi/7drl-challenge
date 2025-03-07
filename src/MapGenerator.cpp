@@ -1,11 +1,8 @@
 #include "libtcod.hpp"
 #include "utility.hpp"
-#include "Controller.hpp"
-#include "Entity.hpp"
+#include "MapGenerator.hpp"
 #include "CreatureFactory.hpp"
 #include "ItemFactory.hpp"
-#include "Map.hpp"
-#include "MapGenerator.hpp"
 
 static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 4;

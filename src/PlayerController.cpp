@@ -1,13 +1,7 @@
-#include "libtcod.hpp"
-#include "Controller.hpp"
 #include "PlayerController.hpp"
-#include "Entity.hpp"
-#include "Being.hpp"
-#include "Action.hpp"
-#include "actions/MoveAction.hpp"
-#include "actions/AttackAction.hpp"
-#include "ActionQueue.hpp"
 #include "Engine.hpp"
+#include "actions/AttackAction.hpp"
+#include "actions/MoveAction.hpp"
 
 PlayerController::PlayerController(Entity* owner) : Controller(owner) {}
 

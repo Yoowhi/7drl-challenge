@@ -1,12 +1,5 @@
-#include "libtcod.hpp"
-#include "../Controller.hpp"
-#include "../Action.hpp"
-#include "../Entity.hpp"
-#include "../Being.hpp"
-#include "../Map.hpp"
-#include "../ActionQueue.hpp"
-#include "../Engine.hpp"
 #include "MoveAction.hpp"
+#include "../Engine.hpp"
 
 MoveAction::MoveAction(Entity* actor, int x, int y) : Action(actor, 100), x(x), y(y) {}
 
