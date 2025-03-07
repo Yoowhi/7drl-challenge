@@ -8,12 +8,11 @@
 #include "../ActionQueue.hpp"
 #include "../GUI.hpp"
 #include "../Engine.hpp"
+#include "../items/EquipmentItem.hpp"
+#include "../Equipment.hpp"
 #include "AttackAction.hpp"
 
-AttackAction::AttackAction(Entity* actor, int x, int y) : Action(actor, 100) {
-    this->x = x;
-    this->y = y;
-}
+AttackAction::AttackAction(Entity* actor, int x, int y) : Action(actor, 100), x(x), y(y) {}
 
 void AttackAction::execute() {
     Entity* target = engine.getAliveEntityByCoord(x, y);
@@ -43,11 +42,24 @@ int AttackAction::getTargetDefence(Entity* target) {
 }
 
 float AttackAction::getStaminaCost(Entity* attacker) {
-    return 8.0f;
+    float cost = 1.0f;
+    EquipmentItem* weapon = attacker->being->equipment.getItem(EquipmentItem::WEAPON);
+    if (weapon) {
+        cost = weapon->weight;
+    }
 }
 
 float AttackAction::getAttackerDamage(Entity* attacker, float staminaCost) {
-    float dmg = 5.0f * attacker->being->getDamageMultiplier();
+    EquipmentItem* weapon = attacker->being->equipment.getItem(EquipmentItem::WEAPON);
+    float minDmg = 0;
+    float maxDmg = 1;
+    if (weapon) {
+        minDmg = weapon->minDamage;
+        maxDmg = weapon->maxDamage;
+    }
+    TCODRandom* rng = TCODRandom::getInstance();
+    int initialDmg = rng->getFloat(minDmg, maxDmg);
+    float dmg = initialDmg * attacker->being->getDamageMultiplier();
     float currentStamina = attacker->being->stamina;
     if (staminaCost > currentStamina) {
         // ratio

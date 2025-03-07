@@ -1,6 +1,6 @@
 class Entity;
 
-class Creatures {
+class CreatureFactory {
     public:
         static Entity* randomCreature(int lvl, int x, int y);
 

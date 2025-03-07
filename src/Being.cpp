@@ -7,6 +7,7 @@
 #include "ActionQueue.hpp"
 #include "GUI.hpp"
 #include "Engine.hpp"
+#include "Equipment.hpp"
 
 static const int POINTS_PER_LVL = 3;
 static const int HP_PER_HEALTH_POINT = 2;
@@ -32,7 +33,9 @@ Being::Being(
     health(health),
     agility(agility),
     endurance(endurance),
-    xpForKill(xpForKill) {
+    xpForKill(xpForKill),
+    equipment(owner) {
+        equipment = Equipment(owner);
         hp = baseHp;
         stamina = baseStamina;
     }

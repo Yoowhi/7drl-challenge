@@ -8,10 +8,7 @@
 #include "../Engine.hpp"
 #include "MoveAction.hpp"
 
-MoveAction::MoveAction(Entity* actor, int x, int y) : Action(actor, 100) {
-    this->x = x;
-    this->y = y;
-}
+MoveAction::MoveAction(Entity* actor, int x, int y) : Action(actor, 100), x(x), y(y) {}
 
 void MoveAction::execute() {
     if (engine.map->canWalk(x, y)) {

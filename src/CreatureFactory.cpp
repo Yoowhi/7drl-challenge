@@ -3,14 +3,14 @@
 #include "CreatureController.hpp"
 #include "Being.hpp"
 #include "Entity.hpp"
-#include "Creatures.hpp"
+#include "CreatureFactory.hpp"
 
 
 // несколько архетипов нпц - ловкач, танк, дамагер, босс
 // архетип задает приоритет аттрибутов
 // лвл задает расу
 
-Entity* Creatures::randomCreature(int lvl, int x, int y) {
+Entity* CreatureFactory::randomCreature(int lvl, int x, int y) {
     TCODRandom* rng = TCODRandom::getInstance();
     int points = rng->getInt(0, 100);
     if (points < 50) {
@@ -24,7 +24,7 @@ Entity* Creatures::randomCreature(int lvl, int x, int y) {
     }
 }
 
-Entity* Creatures::kobold(int lvl, int x, int y) {
+Entity* CreatureFactory::kobold(int lvl, int x, int y) {
     Entity* kobold = new Entity(x, y, 'k', TCODColor::brass, "kobold", true);
     kobold->controller = new CreatureController(kobold);
     kobold->being = new Being(
@@ -41,7 +41,7 @@ Entity* Creatures::kobold(int lvl, int x, int y) {
     return kobold;
 }
 
-Entity* Creatures::goblin(int lvl, int x, int y) {
+Entity* CreatureFactory::goblin(int lvl, int x, int y) {
     Entity* goblin = new Entity(x, y, 'g', TCODColor::darkGreen, "goblin", true);
     goblin->controller = new CreatureController(goblin);
     goblin->being = new Being(
@@ -58,7 +58,7 @@ Entity* Creatures::goblin(int lvl, int x, int y) {
     return goblin;
 }
 
-Entity* Creatures::orc(int lvl, int x, int y) {
+Entity* CreatureFactory::orc(int lvl, int x, int y) {
     Entity* orc = new Entity(x, y, 'o', TCODColor::green, "orc", true);
     orc->controller = new CreatureController(orc);
     orc->being = new Being(
@@ -75,7 +75,7 @@ Entity* Creatures::orc(int lvl, int x, int y) {
     return orc;
 }
 
-Entity* Creatures::troll(int lvl, int x, int y) {
+Entity* CreatureFactory::troll(int lvl, int x, int y) {
     Entity* troll = new Entity(x, y, 'T', TCODColor::cyan, "troll", true);
     troll->controller = new CreatureController(troll);
     troll->being = new Being(

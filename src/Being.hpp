@@ -13,6 +13,7 @@ class Being {
         int health; // amount of health points
         int agility; // speed of actions
         int endurance; // stamina
+        Equipment equipment;
 
         Entity* owner;
 

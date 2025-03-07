@@ -1,7 +1,9 @@
 #include "libtcod.hpp"
+#include "utility.hpp"
 #include "Controller.hpp"
 #include "Entity.hpp"
-#include "Creatures.hpp"
+#include "CreatureFactory.hpp"
+#include "ItemFactory.hpp"
 #include "Map.hpp"
 #include "MapGenerator.hpp"
 
@@ -96,17 +98,26 @@ void MapGenerator::createArea(int x1, int y1, int x2, int y2) {
 }
 
 void MapGenerator::createCreatures(int x1, int y1, int x2, int y2) {
-    TCODRandom* rng = TCODRandom::getInstance();
-    int monsters = rng->getInt(0, 4);
+    int monsters = rnd(0, 4);
     for (int i = 0; i < monsters; i++) {
-        int randX = rng->getInt(x1, x2);
-        int randY = rng->getInt(y1, y2);
+        int randX = rnd(x1, x2);
+        int randY = rnd(y1, y2);
         if (map->canWalk(randX, randY)) {
-            Entity* creature = Creatures::randomCreature(lvl, randX, randY);
+            Entity* creature = CreatureFactory::randomCreature(lvl, randX, randY);
             map->entities.push(creature);
         }
     }
 
 }
 
-void MapGenerator::createLoot(int x1, int y1, int x2, int y2) {}
+void MapGenerator::createLoot(int x1, int y1, int x2, int y2) {
+    int loot = rnd(0, 2);
+    for (int i = 0; i < loot; i++) {
+        int randX = rnd(x1, x2);
+        int randY = rnd(y1, y2);
+        if (map->canWalk(randX, randY)) {
+            Entity* item = ItemFactory::createItem(lvl, randX, randY);
+            map->entities.push(item);
+        }
+    }
+}

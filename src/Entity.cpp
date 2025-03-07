@@ -1,6 +1,9 @@
 #include "libtcod.hpp"
 #include "Controller.hpp"
 #include "Being.hpp"
+#include "Action.hpp"
+#include "Item.hpp"
+#include "Container.hpp"
 #include "Entity.hpp"
 
 Entity::Entity(int x, int y, int symbol, TCODColor color, char* name, bool blocks)
