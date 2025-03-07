@@ -3,6 +3,9 @@
 #include "Being.hpp"
 #include "Engine.hpp"
 #include "Map.hpp"
+#include "Entity.hpp"
+#include "GUI.hpp"
+#include "ActionQueue.hpp"
 
 static const int POINTS_PER_LVL = 3;
 static const int HP_PER_HEALTH_POINT = 2;

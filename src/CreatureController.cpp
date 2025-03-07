@@ -5,6 +5,8 @@
 #include "actions/MoveAction.hpp"
 #include "actions/AttackAction.hpp"
 #include "actions/IdleAction.hpp"
+#include "Entity.hpp"
+#include "ActionQueue.hpp"
 
 CreatureController::CreatureController(Entity* owner) : Controller(owner) {}
 

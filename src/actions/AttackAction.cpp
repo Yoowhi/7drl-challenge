@@ -2,6 +2,9 @@
 #include "AttackAction.hpp"
 #include "../Engine.hpp"
 #include "../items/EquipmentItem.hpp"
+#include "../GUI.hpp"
+#include "../Entity.hpp"
+#include "../Being.hpp"
 
 AttackAction::AttackAction(Entity* actor, int x, int y) : Action(actor, 100), x(x), y(y) {}
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "items/EquipmentItem.hpp"
+#include <unordered_map>
 class Entity;
 
 class Equipment {

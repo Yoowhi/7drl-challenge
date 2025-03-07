@@ -2,6 +2,7 @@
 #include "CreatureFactory.hpp"
 #include "CreatureController.hpp"
 #include "Being.hpp"
+#include "Entity.hpp"
 
 
 Entity* CreatureFactory::randomCreature(int lvl, int x, int y) {

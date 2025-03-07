@@ -3,6 +3,7 @@
 #include "MapGenerator.hpp"
 #include "CreatureFactory.hpp"
 #include "ItemFactory.hpp"
+#include "Map.hpp"
 
 static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 4;

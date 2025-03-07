@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity.hpp"
+#include "libtcod.hpp"
 #include "items/EquipmentItem.hpp"
 class Entity;
 

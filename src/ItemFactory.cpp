@@ -1,6 +1,7 @@
 #include "utility.hpp"
 #include "ItemFactory.hpp"
 #include "items/PotionItem.hpp"
+#include "Entity.hpp"
 
 Entity* ItemFactory::createItem(int lvl, int x, int y) {
     int lvlModifier = rnd(0, 3);

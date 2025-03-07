@@ -1,5 +1,8 @@
 #include "GUI.hpp"
 #include "Engine.hpp"
+#include "Entity.hpp"
+#include "Being.hpp"
+#include "Map.hpp"
 
 static const int PANEL_HEIGHT = 8;
 static const int BAR_WIDTH = 20;

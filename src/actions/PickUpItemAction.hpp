@@ -1,7 +1,5 @@
 #pragma once
 #include "../Action.hpp"
-#include "../Entity.hpp"
-#include "../Item.hpp"
 class Entity;
 class Item;
 

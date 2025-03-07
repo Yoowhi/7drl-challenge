@@ -1,6 +1,4 @@
 #pragma once
-#include "Entity.hpp"
-#include "Item.hpp"
 class Entity;
 class Item;
 

@@ -1,5 +1,8 @@
 #include "MoveAction.hpp"
 #include "../Engine.hpp"
+#include "../Map.hpp"
+#include "../Entity.hpp"
+#include "../Being.hpp"
 
 MoveAction::MoveAction(Entity* actor, int x, int y) : Action(actor, 100), x(x), y(y) {}
 

@@ -2,6 +2,11 @@
 #include "PlayerController.hpp"
 #include "Being.hpp"
 #include "MapGenerator.hpp"
+#include "Entity.hpp"
+#include "Map.hpp"
+#include "ActionQueue.hpp"
+#include "GUI.hpp"
+#include "Action.hpp"
 
 
 static const int FOV_RADIUS = 10;

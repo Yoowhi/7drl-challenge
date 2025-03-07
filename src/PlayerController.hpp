@@ -1,6 +1,5 @@
 #pragma once
 #include "Controller.hpp"
-#include "Entity.hpp"
 class Entity;
 
 class PlayerController : public Controller {

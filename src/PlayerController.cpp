@@ -2,6 +2,8 @@
 #include "Engine.hpp"
 #include "actions/AttackAction.hpp"
 #include "actions/MoveAction.hpp"
+#include "Entity.hpp"
+#include "ActionQueue.hpp"
 
 PlayerController::PlayerController(Entity* owner) : Controller(owner) {}
 

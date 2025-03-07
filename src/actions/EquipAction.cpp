@@ -1,4 +1,8 @@
 #include "EquipAction.hpp"
+#include "../Entity.hpp"
+#include "../Container.hpp"
+#include "../Being.hpp"
+
 
 EquipAction::EquipAction(Entity* actor, EquipmentItem* item) : Action(actor, 100), item(item) {}
 

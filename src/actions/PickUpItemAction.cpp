@@ -1,5 +1,9 @@
 #include "PickUpItemAction.hpp"
 #include "../Engine.hpp"
+#include "../Entity.hpp"
+#include "../Container.hpp"
+#include "../Map.hpp"
+#include "../Being.hpp"
 
 PickUpItemAction::PickUpItemAction(Entity* actor, Item* item) : Action(actor, 100), item(item) {}
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "Map.hpp"
 class Map;
 class Tile;
 

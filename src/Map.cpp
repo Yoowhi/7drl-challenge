@@ -1,4 +1,5 @@
 #include "Map.hpp"
+#include "Entity.hpp"
 
 Map::Map() {}
 
