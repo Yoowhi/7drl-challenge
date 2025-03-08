@@ -13,7 +13,7 @@
 static const int FOV_RADIUS = 10;
 
 Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0), currentMapId(-1) {
-    TCODConsole::initRoot(screenWidth, screenHeight, "kek", false, TCOD_RENDERER_SDL);
+    TCODConsole::initRoot(screenWidth, screenHeight, "Endless Dungeon", false, TCOD_RENDERER_SDL);
     TCODConsole::setCustomFont("./data/tileset.png",TCOD_FONT_LAYOUT_ASCII_INROW, 16, 16);
     //TCODSystem::setFps(25);
     gui = new GUI();
