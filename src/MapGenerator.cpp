@@ -68,9 +68,9 @@ MapGenerator::MapGenerator(int lvl, int width, int height) : lvl(lvl) {
 Map* MapGenerator::generate(int lvl, int width, int height) {
     MapGenerator gen(lvl, width, height);
     TCODBsp bsp(0, 0, width, height);
-    bsp.splitRecursive(NULL, 8, ROOM_MAX_SIZE, ROOM_MAX_SIZE, 1.5f, 1.5f);
+    bsp.splitRecursive(nullptr, 8, ROOM_MAX_SIZE, ROOM_MAX_SIZE, 1.5f, 1.5f);
     BspListener listener(gen);
-    bsp.traverseInvertedLevelOrder(&listener, NULL);
+    bsp.traverseInvertedLevelOrder(&listener, nullptr);
     int downX = listener.lastRoomX + listener.lastRoomW / 2;
     int downY = listener.lastRoomY + listener.lastRoomH / 2;
     gen.map->downX = downX;

@@ -14,7 +14,7 @@ static const int FOV_RADIUS = 10;
 
 Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0), currentMapId(-1) {
     TCODConsole::initRoot(screenWidth, screenHeight, "kek", false, TCOD_RENDERER_SDL);
-    TCODConsole::setCustomFont("./data/Anikki_square_8x8.png",TCOD_FONT_LAYOUT_ASCII_INROW, 16, 16);
+    TCODConsole::setCustomFont("./data/tileset.png",TCOD_FONT_LAYOUT_ASCII_INROW, 16, 16);
     //TCODSystem::setFps(25);
     gui = new GUI();
     player = CreatureFactory::newPlayer();
@@ -61,7 +61,9 @@ void Engine::update() {
     action->execute();
     if (action->actor == player) {
         computeFOV();
-        state = INPUT;
+        if (state != UPSTAIRS & state != DOWNSTAIRS) {
+            state = INPUT;
+        }
     } else {
         action->actor->update();
     }
@@ -84,6 +86,15 @@ void Engine::renderMap() {
             } else if (isExplored(x, y)) {
                 TCODConsole::root->putCharEx(x, y, tile->ch, tile->frontColorFaded, tile->backColorFaded);
             }
+        }
+    }
+}
+
+void Engine::clearScreen() {
+    for (int y = 0; y < map->height; y++) {
+        for (int x = 0; x < map->width; x++) {
+            TCODConsole::root->setChar(x, y, ' ');
+            TCODConsole::root->setCharForeground(x, y, TCODConsole::root->getDefaultBackground());
         }
     }
 }
@@ -121,7 +132,7 @@ bool Engine::isInFOV(int x, int y) {
 }
 
 /**
- * @returns possibly NULL
+ * @returns possibly nullptr
  */
 Entity* Engine::getAliveEntityByCoord(int x, int y) {
     for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
@@ -130,11 +141,11 @@ Entity* Engine::getAliveEntityByCoord(int x, int y) {
             return entity;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /**
- * @returns possibly NULL
+ * @returns possibly nullptr
  */
 Entity* Engine::getItemEntityByCoord(int x, int y) {
     for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
@@ -143,11 +154,11 @@ Entity* Engine::getItemEntityByCoord(int x, int y) {
             return entity;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /**
- * @returns possibly NULL
+ * @returns possibly nullptr
  */
 Entity* Engine::getStairsEntityByCoord(int x, int y) {
     for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
@@ -156,14 +167,14 @@ Entity* Engine::getStairsEntityByCoord(int x, int y) {
             return entity;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void Engine::toNextMap() {
     if (this->map) {
         this->map->exit(player);
     }
-    Map* map;
+    Map* map = nullptr;
     if (maps.size() - 1 == currentMapId) {
         map = newMap(player->being->lvl);
         maps.push(map);
@@ -190,6 +201,7 @@ void Engine::toPreviousMap() {
 void Engine::initMap(Map* map) {
     if (actions) delete actions;
     actions = new ActionQueue();
+    clearScreen();
     this->map = map;
     computeFOV();
     // initialize actions

@@ -6,6 +6,7 @@
 #include "Entity.hpp"
 #include "GUI.hpp"
 #include "ActionQueue.hpp"
+#include "math.h"
 
 static const int POINTS_PER_LVL = 3;
 static const int HP_PER_HEALTH_POINT = 2;

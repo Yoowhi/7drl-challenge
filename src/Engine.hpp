@@ -41,6 +41,7 @@ class Engine {
         void update();
         void render();
         void renderMap();
+        void clearScreen();
         void renderEntities();
         void toNextMap();
         void toPreviousMap();

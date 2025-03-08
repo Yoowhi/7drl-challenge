@@ -31,7 +31,7 @@ Item* Container::getItem(int id) {
 void Container::remove(Item* item) {
     for (int i = 0; i < CONTAINER_SIZE; i++) {
         if (item == items[i]) {
-            items[i] = NULL;
+            items[i] = nullptr;
             return;
 
         }
@@ -44,6 +44,6 @@ Item* Container::getOut(int id) {
         throw "Requested item ID from Container is larger than CONTAINER_SIZE";
     }
     Item* item = items[id];
-    items[id] = NULL;
+    items[id] = nullptr;
     return item;
 }

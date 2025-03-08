@@ -20,7 +20,7 @@ void PlayerController::update() {
     if (!owner->isAlive()) {
         return;
     }
-    Action* action = NULL;
+    Action* action = nullptr;
     switch (engine.lastKey.vk) {
         case TCODK_UP : action = moveOrAttack(0, -1); break;
         case TCODK_DOWN : action = moveOrAttack(0, 1); break;
@@ -30,7 +30,7 @@ void PlayerController::update() {
         default:
             break;
     }
-    if (action != NULL) {
+    if (action) {
         engine.actions->add(action);
         engine.state = Engine::TURN;
     }
@@ -85,11 +85,11 @@ Action* PlayerController::handleChar(char& ascii) {
         default:
             break;
     }
-    return NULL;
+    return nullptr;
 }
 
 Action* PlayerController::handleActivate() {
-    Entity* entity;
+    Entity* entity = nullptr;
     entity = engine.getItemEntityByCoord(owner->x, owner->y);
     if (entity) {
         return new PickUpItemAction(owner, entity->item);
@@ -98,7 +98,7 @@ Action* PlayerController::handleActivate() {
     if (entity) {
         return new StairsAction(owner, entity->stairs);
     }
-    return NULL;
+    return nullptr;
 }
 
 Action* PlayerController::useFromInventory(int id) {
@@ -107,7 +107,7 @@ Action* PlayerController::useFromInventory(int id) {
     }
     Item* item = owner->inventory->getItem(id);
     if (!item) {
-        return NULL;
+        return nullptr;
     }
     return item->use(owner);
 }
@@ -115,7 +115,7 @@ Action* PlayerController::useFromInventory(int id) {
 Action* PlayerController::dropFromInventory(int id) {
     Item* item = owner->inventory->getItem(id);
     if (!item) {
-        return NULL;
+        return nullptr;
     }
     return new DropItemAction(owner, item);
 }

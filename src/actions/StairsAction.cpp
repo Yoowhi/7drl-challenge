@@ -4,7 +4,7 @@
 #include "../Stairs.hpp"
 #include "../Engine.hpp"
 
-StairsAction::StairsAction(Entity* actor, Stairs* stairs) : Action(actor, 100), stairs(stairs) {}
+StairsAction::StairsAction(Entity* actor, Stairs* stairs) : Action(actor, -1000000), stairs(stairs) {}
 
 void StairsAction::execute() {
     switch (stairs->direction) {
@@ -12,5 +12,4 @@ void StairsAction::execute() {
         case Stairs::DOWN: engine.state = Engine::DOWNSTAIRS; break;
         default: throw "Unknown Stairs direction";
     }
-    actor->being->restoreStamina(this->time);
 }

@@ -40,7 +40,7 @@ bool Map::canWalk(int x, int y) {
 
 Tile* Map::getTile(int x, int y) {
     if ( x < 0 || x >= width || y < 0 || y >= height ) {
-        return NULL;
+        return nullptr;
     }
     return &tiles[x + y * width];
 }

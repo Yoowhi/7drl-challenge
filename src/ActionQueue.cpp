@@ -41,7 +41,7 @@ void ActionQueue::clearFromActor(Entity* actor) {
 
 Action* ActionQueue::next() {
     if (actions.size() == 0) {
-        return NULL;
+        return nullptr;
     }
     Action* action = actions.pop();
     for (Action** iter = actions.begin(); iter < actions.end(); iter++) {

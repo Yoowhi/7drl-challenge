@@ -25,5 +25,5 @@ void Entity::update() {
 }
 
 bool Entity::isAlive() {
-    return being != NULL && being->hp > 0;
+    return being != nullptr && being->hp > 0;
 }
