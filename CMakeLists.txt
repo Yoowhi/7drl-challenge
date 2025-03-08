@@ -59,10 +59,10 @@ target_link_libraries(
 
 # Copy Data dir
 set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/data")
-set(OUTPUT_DIR "${PROJECT_BINARY_DIR}/bin/data")
-file(MAKE_DIRECTORY ${OUTPUT_DIR})
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${RESOURCE_DIR} ${OUTPUT_DIR}
-)
+set(OUTPUT_DIR "${PROJECT_BINARY_DIR}/bin")
+file(GLOB DATA_FILES "${CMAKE_CURRENT_SOURCE_DIR}/data/*")
+
+# Copy each file to the destination directory
+foreach(file ${DATA_FILES})
+    file(COPY ${file} DESTINATION ${OUTPUT_DIR})
+endforeach()
