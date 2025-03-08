@@ -75,7 +75,7 @@ Entity* ItemFactory::createWeaponItem(int lvl, int x, int y, ItemFactory::Metal 
 }
 
 Entity* ItemFactory::createHelmetItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity) {
-    Entity* entity = new Entity(x, y, 'o', metal.color, concatenate(metal.name, " chestplate"), false);
+    Entity* entity = new Entity(x, y, 'o', metal.color, concatenate(metal.name, " helmet"), false);
     EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::HELMET);
     item->defence = 4 * (lvl + getRarityLvlModifier(rarity)) / 2;
     int weightLvlModifier = lvl - getRarityLvlModifier(rarity);
@@ -86,7 +86,7 @@ Entity* ItemFactory::createHelmetItem(int lvl, int x, int y, ItemFactory::Metal 
 }
 
 Entity* ItemFactory::createChestItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity) {
-    Entity* entity = new Entity(x, y, '0', metal.color, concatenate(metal.name, " chestplate"), false);
+    Entity* entity = new Entity(x, y, '0', metal.color, concatenate(metal.name, " plate"), false);
     EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::CHEST);
     item->defence = 4 * (lvl + getRarityLvlModifier(rarity)) / 2;
     int weightLvlModifier = lvl - getRarityLvlModifier(rarity);

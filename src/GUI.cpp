@@ -33,15 +33,15 @@ GUI::Message::~Message() {
 }
 
 void GUI::render() {
-    console->setDefaultBackground(TCODColor::black);
+    console->setDefaultBackground(TCODColor::darkestGrey);
     console->clear();
 
-    console->setDefaultBackground(TCODColor::darkGrey);
+    console->setDefaultBackground(TCODColor::darkerGrey);
     console->rect(0, 0, engine.screenWidth, 1, false, TCOD_BKGND_SET);
     console->rect(EQUIPMENT_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
     console->rect(MSG_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
     console->rect(INVENTORY_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
-    console->setDefaultBackground(TCODColor::black);
+    console->setDefaultBackground(TCODColor::darkestGrey);
 
     renderBar(1, 2, BAR_WIDTH, (int)engine.player->being->hp, (int)engine.player->being->getMaxHp(), TCODColor::darkRed, TCODColor::darkestRed);
     renderBar(1, 4, BAR_WIDTH, (int)engine.player->being->stamina, (int)engine.player->being->getMaxStamina(), TCODColor::darkGreen, TCODColor::darkestGreen);
@@ -76,7 +76,6 @@ Ctrl GUI::itemNumberToCtrl(int i) {
         case 2: return Ctrl::USE2;
         case 3: return Ctrl::USE3;
         case 4: return Ctrl::USE4;
-        case 5: return Ctrl::USE5;
         default: throw std::runtime_error("Too high item index in GUI::itemNumberToCtrl");
     }
 }
@@ -124,8 +123,8 @@ void GUI::renderMessages() {
         console->setDefaultForeground(message->col * colorCoef);
         console->print(MSG_X, y, message->text);
         y++;
-        if ( colorCoef > 0.2f ) {
-            colorCoef -= 0.2f;
+        if ( colorCoef > 0.3f ) {
+            colorCoef -= 0.15f;
         }
     }
 }

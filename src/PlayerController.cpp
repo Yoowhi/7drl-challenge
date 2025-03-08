@@ -82,7 +82,6 @@ Action* PlayerController::handleChar(char& ascii) {
         case Ctrl::USE2: return shift ? dropFromInventory(2) : useFromInventory(2);
         case Ctrl::USE3: return shift ? dropFromInventory(3) : useFromInventory(3);
         case Ctrl::USE4: return shift ? dropFromInventory(4) : useFromInventory(4);
-        case Ctrl::USE5: return shift ? dropFromInventory(5) : useFromInventory(5);
         default:
             break;
     }
