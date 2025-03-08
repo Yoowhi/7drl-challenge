@@ -5,7 +5,7 @@ class Item;
 class Container {
     public:
         Entity* owner;
-        static const int CONTAINER_SIZE = 6;
+        static const int CONTAINER_SIZE = 5;
         Item* items[CONTAINER_SIZE];
 
         Container(Entity* owner);

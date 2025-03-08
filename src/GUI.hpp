@@ -1,8 +1,11 @@
 #pragma once
 #include "libtcod.hpp"
+#include "Ctrl.hpp"
 
 class GUI {
     public:
+        static const int PANEL_HEIGHT = 8;
+
         GUI();
         ~GUI();
         void render();
@@ -26,4 +29,9 @@ class GUI {
             const TCODColor& backColor
         );
         void renderMouseLook();
+        void renderMessages();
+        void renderInventory();
+        void renderEquipment();
+        void renderDebug();
+        Ctrl itemNumberToCtrl(int i);
 };

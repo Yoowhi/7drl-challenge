@@ -19,6 +19,7 @@ class ItemFactory {
         static Entity* createChestItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity);
         static Entity* createGlovesItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity);
         static Entity* createBootsItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity);
+        static Entity* _createTestingWeapon(int lvl, int x, int y);
 
         static Entity* createPotionItem(int lvl, int x, int y);
         static Entity* createHealthPotionItem(int lvl, int x, int y);

@@ -23,6 +23,8 @@ class Engine {
         int mouseCellX, mouseCellY;
         ActionQueue* actions;
         GUI* gui;
+        int currentMapId;
+        TCODList<Map*> maps;
 
         Engine(int screenWidth, int screenHeight);
         ~Engine();
@@ -40,6 +42,10 @@ class Engine {
         void render();
         void renderMap();
         void renderEntities();
+        void toNextMap();
+        void toPreviousMap();
+        void initMap(Map* map);
+        Map* newMap(int lvl);
 };
 
 extern Engine engine;

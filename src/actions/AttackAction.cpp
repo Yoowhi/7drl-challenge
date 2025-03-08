@@ -41,6 +41,7 @@ float AttackAction::getStaminaCost(Entity* attacker) {
     if (weapon) {
         cost = weapon->weight;
     }
+    return cost;
 }
 
 float AttackAction::getAttackerDamage(Entity* attacker, float staminaCost) {

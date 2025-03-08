@@ -32,6 +32,8 @@ void Container::remove(Item* item) {
     for (int i = 0; i < CONTAINER_SIZE; i++) {
         if (item == items[i]) {
             items[i] = NULL;
+            return;
+
         }
     }
     throw std::runtime_error("Requested item not found in Container");

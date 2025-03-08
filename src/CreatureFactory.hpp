@@ -3,6 +3,8 @@ class Entity;
 
 class CreatureFactory {
     public:
+        static Entity* newPlayer();
+
         static Entity* randomCreature(int lvl, int x, int y);
 
         static Entity* kobold(int lvl, int x, int y);

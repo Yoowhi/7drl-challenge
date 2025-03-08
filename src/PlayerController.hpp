@@ -11,7 +11,7 @@ class PlayerController : public Controller {
 
     private:
         Action* moveOrAttack(int dx, int dy);
-        Action* handleChar(int ascii);
+        Action* handleChar(char& ascii);
         Action* handleActivate();
         Action* useFromInventory(int id);
         Action* dropFromInventory(int id);

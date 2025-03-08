@@ -118,6 +118,10 @@ Entity* ItemFactory::createBootsItem(int lvl, int x, int y, ItemFactory::Metal m
     return entity;
 }
 
+Entity* ItemFactory::_createTestingWeapon(int lvl, int x, int y) {
+    return createWeaponItem(lvl, x, y, getMetal(lvl), getRandomEquipmentRarity());
+}
+
 EquipmentItem::Rarity ItemFactory::getRandomEquipmentRarity() {
     int number = rnd(0, 100);
     if (number < 50) return EquipmentItem::COMMON;
@@ -150,7 +154,7 @@ Entity* ItemFactory::createPotionItem(int lvl, int x, int y) {
 }
 
 Entity* ItemFactory::createHealthPotionItem(int lvl, int x, int y) {
-    Entity* entity = new Entity(x, y, '`', TCODColor::darkRed, concatenate("Health", " potion"), false);
+    Entity* entity = new Entity(x, y, '`', TCODColor::darkRed, concatenate("Red", " potion"), false);
     PotionItem* item = new PotionItem(entity);
     item->hp = 10 + lvl * 2;
     entity->item = item;
@@ -158,7 +162,7 @@ Entity* ItemFactory::createHealthPotionItem(int lvl, int x, int y) {
 }
 
 Entity* ItemFactory::createStaminaPotionItem(int lvl, int x, int y) {
-    Entity* entity = new Entity(x, y, '`', TCODColor::darkGreen, concatenate("Stamina", " potion"), false);
+    Entity* entity = new Entity(x, y, '`', TCODColor::darkGreen, concatenate("Green", " potion"), false);
     PotionItem* item = new PotionItem(entity);
     item->stamina = 20 + lvl * 2;
     entity->item = item;
@@ -166,7 +170,7 @@ Entity* ItemFactory::createStaminaPotionItem(int lvl, int x, int y) {
 }
 
 Entity* ItemFactory::createRestorationPotionItem(int lvl, int x, int y) {
-    Entity* entity = new Entity(x, y, '`', TCODColor::purple, concatenate("Restoration", " potion"), false);
+    Entity* entity = new Entity(x, y, '`', TCODColor::purple, concatenate("Purple", " potion"), false);
     PotionItem* item = new PotionItem(entity);
     item->hp = 30 + lvl * 2;
     item->stamina = 60 + lvl * 2;

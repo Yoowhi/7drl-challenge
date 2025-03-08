@@ -2,12 +2,17 @@
 #include "Engine.hpp"
 #include "Entity.hpp"
 #include "Being.hpp"
+#include "Container.hpp"
+#include "Item.hpp"
+#include "Equipment.hpp"
+#include "items/EquipmentItem.hpp"
 #include "Map.hpp"
 
-static const int PANEL_HEIGHT = 8;
 static const int BAR_WIDTH = 20;
-static const int MSG_X = 50;
-static const int MSG_HEIGHT = PANEL_HEIGHT - 1;
+static const int EQUIPMENT_X = BAR_WIDTH + 2 + 1;
+static const int INVENTORY_X = EQUIPMENT_X + 34;
+static const int MSG_X = INVENTORY_X + 28;
+static const int MSG_HEIGHT = GUI::PANEL_HEIGHT - 1;
 
 GUI::GUI() {
     console = new TCODConsole(engine.screenWidth, PANEL_HEIGHT);
@@ -33,11 +38,85 @@ void GUI::render() {
 
     console->setDefaultBackground(TCODColor::darkGrey);
     console->rect(0, 0, engine.screenWidth, 1, false, TCOD_BKGND_SET);
+    console->rect(EQUIPMENT_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
+    console->rect(MSG_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
+    console->rect(INVENTORY_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
     console->setDefaultBackground(TCODColor::black);
 
     renderBar(1, 2, BAR_WIDTH, (int)engine.player->being->hp, (int)engine.player->being->getMaxHp(), TCODColor::darkRed, TCODColor::darkestRed);
     renderBar(1, 4, BAR_WIDTH, (int)engine.player->being->stamina, (int)engine.player->being->getMaxStamina(), TCODColor::darkGreen, TCODColor::darkestGreen);
     renderBar(1, 6, BAR_WIDTH, engine.player->being->xp, engine.player->being->getMaxXp(), TCODColor::darkSky, TCODColor::darkestSky);
+    renderMessages();
+    renderMouseLook();
+    renderInventory();
+    renderEquipment();
+    //renderDebug();
+    TCODConsole::blit(console, 0, 0, engine.screenWidth, PANEL_HEIGHT, TCODConsole::root, 0, engine.screenHeight - PANEL_HEIGHT);
+}
+
+void GUI::renderInventory() {
+    console->setDefaultForeground(TCODColor::darkestGrey);
+    console->print(INVENTORY_X + 3, 0, "%c", engine.lastKey.shift ? "Inventory: DROP" : "Inventory: USE" );
+    Container* container = engine.player->inventory;
+    for (int i = 0; i < Container::CONTAINER_SIZE; i++) {
+        Item* item = container->getItem(i);
+        if (item) {
+            console->setDefaultForeground(TCODColor::darkGreen);
+            console->print(INVENTORY_X + 1, 2 + i, "%c", itemNumberToCtrl(i));
+            console->setDefaultForeground(TCODColor::white);
+            console->print(INVENTORY_X + 3, 2 + i, "%s", item->owner->name);
+        }
+    }
+}
+
+Ctrl GUI::itemNumberToCtrl(int i) {
+    switch (i) {
+        case 0: return Ctrl::USE0;
+        case 1: return Ctrl::USE1;
+        case 2: return Ctrl::USE2;
+        case 3: return Ctrl::USE3;
+        case 4: return Ctrl::USE4;
+        case 5: return Ctrl::USE5;
+        default: throw std::runtime_error("Too high item index in GUI::itemNumberToCtrl");
+    }
+}
+
+void GUI::renderEquipment() {
+    console->setDefaultForeground(TCODColor::white);
+    Equipment& equipment = engine.player->being->equipment;
+    EquipmentItem* weapon = equipment.getItem(EquipmentItem::WEAPON);
+    if (weapon) {
+        console->print(EQUIPMENT_X + 1, 2, "WEAPON: %s", weapon->owner->name);
+    } else {
+        console->print(EQUIPMENT_X + 1, 2, "WEAPON: -");
+    }
+    EquipmentItem* head = equipment.getItem(EquipmentItem::HELMET);
+    if (head) {
+        console->print(EQUIPMENT_X + 1, 3, "HEAD  : %s", head->owner->name);
+    } else {
+        console->print(EQUIPMENT_X + 1, 3, "HEAD  : -");
+    }
+    EquipmentItem* chest = equipment.getItem(EquipmentItem::CHEST);
+    if (chest) {
+        console->print(EQUIPMENT_X + 1, 4, "CHEST : %s", chest->owner->name);
+    } else {
+        console->print(EQUIPMENT_X + 1, 4, "CHEST : -");
+    }
+    EquipmentItem* gloves = equipment.getItem(EquipmentItem::GLOVES);
+    if (gloves) {
+        console->print(EQUIPMENT_X+ 1, 5, "GLOVES: %s", gloves->owner->name);
+    } else {
+        console->print(EQUIPMENT_X + 1, 5, "GLOVES: -");
+    }
+    EquipmentItem* boots = equipment.getItem(EquipmentItem::BOOTS);
+    if (boots) {
+        console->print(EQUIPMENT_X + 1, 6, "BOOTS : %s", boots->owner->name);
+    } else {
+        console->print(EQUIPMENT_X + 1, 6, "BOOTS : -");
+    }
+}
+
+void GUI::renderMessages() {
     int y = 1;
     float colorCoef = 1.0f;
     for (Message** iterator = messages.begin(); iterator != messages.end(); iterator++) {
@@ -45,11 +124,13 @@ void GUI::render() {
         console->setDefaultForeground(message->col * colorCoef);
         console->print(MSG_X, y, message->text);
         y++;
-        if ( colorCoef > 0.3f ) {
-            colorCoef -= 0.1f;
+        if ( colorCoef > 0.2f ) {
+            colorCoef -= 0.2f;
         }
     }
-    renderMouseLook();
+}
+
+void GUI::renderDebug() {
     console->setDefaultForeground(TCODColor::white);
     console->print(0, 7, "%u", TCODSystem::getFps());
     console->print(6, 7, "%u:%u", engine.mouseCellX, engine.mouseCellY);
@@ -57,7 +138,6 @@ void GUI::render() {
     int windowWidth, windowHeight;
     TCODSystem::getCurrentResolution(&windowWidth, &windowHeight);
     console->print(26, 7, "%u:%u", windowWidth, windowHeight);
-    TCODConsole::blit(console, 0, 0, engine.screenWidth, PANEL_HEIGHT, TCODConsole::root, 0, engine.screenHeight - PANEL_HEIGHT);
 }
 
 void GUI::renderBar(

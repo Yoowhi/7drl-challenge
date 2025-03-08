@@ -1,7 +1,8 @@
 #pragma once
 #include "Stairs.hpp"
 class Map;
-class Tile;
+class Entity;
+struct Tile;
 
 class MapGenerator {
     public:

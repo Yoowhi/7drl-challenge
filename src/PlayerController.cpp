@@ -20,23 +20,52 @@ void PlayerController::update() {
     if (!owner->isAlive()) {
         return;
     }
-    Action* action;
+    Action* action = NULL;
     switch (engine.lastKey.vk) {
         case TCODK_UP : action = moveOrAttack(0, -1); break;
         case TCODK_DOWN : action = moveOrAttack(0, 1); break;
         case TCODK_LEFT : action = moveOrAttack(-1, 0); break;
         case TCODK_RIGHT : action = moveOrAttack(1, 0); break;
-        case TCODK_CHAR : action = handleChar(engine.lastKey.c);
+        case TCODK_CHAR : action = handleChar(engine.lastKey.c); break;
         default:
             break;
     }
-    if (action) {
+    if (action != NULL) {
         engine.actions->add(action);
         engine.state = Engine::TURN;
     }
 }
 
-Action* PlayerController::handleChar(int ascii) {
+// Ctrl intToCtrl(char ch) {
+//     switch (ch) {
+//         case 'w': return UP;
+//         case 'e': return UPRIGHT;
+//         case 'd': return RIGHT;
+//         case 'c': return DOWNRIGHT;
+//         case 'x': return DOWN;
+//         case 'z': return DOWNLEFT;
+//         case 'a': return LEFT;
+//         case 'q': return UPLEFT;
+//         case 's': return IDLE;
+//         case 'f': return ACTIVATE;
+//         case 'p': return USE0;
+//         case '2': return USE1;
+//         case '3': return USE2;
+//         case '4': return USE3;
+//         case '5': return USE4;
+//         case '6': return USE5;
+//         case '!': return DROP0;
+//         case '@': return DROP1;
+//         case '#': return DROP2;
+//         case '$': return DROP3;
+//         case '%': return DROP4;
+//         case '^': return DROP5;
+//         default: return NO_ACTION;
+//     }
+// }
+
+Action* PlayerController::handleChar(char& ascii) {
+    bool shift = engine.lastKey.shift;
     switch (ascii) {
         case Ctrl::UP : return moveOrAttack(0, -1);
         case Ctrl::UPRIGHT : return moveOrAttack(1, -1);
@@ -48,24 +77,16 @@ Action* PlayerController::handleChar(int ascii) {
         case Ctrl::UPLEFT : return moveOrAttack(-1, -1);
         case Ctrl::IDLE : return new IdleAction(owner);
         case Ctrl::ACTIVATE: return handleActivate();
-        case Ctrl::USE0: return useFromInventory(0);
-        case Ctrl::USE1: return useFromInventory(1);
-        case Ctrl::USE2: return useFromInventory(2);
-        case Ctrl::USE3: return useFromInventory(3);
-        case Ctrl::USE4: return useFromInventory(4);
-        case Ctrl::USE5: return useFromInventory(5);
-        case Ctrl::DROP0: return dropFromInventory(0);
-        case Ctrl::DROP1: return dropFromInventory(1);
-        case Ctrl::DROP2: return dropFromInventory(2);
-        case Ctrl::DROP3: return dropFromInventory(3);
-        case Ctrl::DROP4: return dropFromInventory(4);
-        case Ctrl::DROP5: return dropFromInventory(5);
-            /* code */
-            break;
-
+        case Ctrl::USE0: return shift ? dropFromInventory(0) : useFromInventory(0);
+        case Ctrl::USE1: return shift ? dropFromInventory(1) : useFromInventory(1);
+        case Ctrl::USE2: return shift ? dropFromInventory(2) : useFromInventory(2);
+        case Ctrl::USE3: return shift ? dropFromInventory(3) : useFromInventory(3);
+        case Ctrl::USE4: return shift ? dropFromInventory(4) : useFromInventory(4);
+        case Ctrl::USE5: return shift ? dropFromInventory(5) : useFromInventory(5);
         default:
             break;
     }
+    return NULL;
 }
 
 Action* PlayerController::handleActivate() {
@@ -82,7 +103,9 @@ Action* PlayerController::handleActivate() {
 }
 
 Action* PlayerController::useFromInventory(int id) {
-
+    if (engine.lastKey.shift) {
+        return dropFromInventory(id);
+    }
     Item* item = owner->inventory->getItem(id);
     if (!item) {
         return NULL;

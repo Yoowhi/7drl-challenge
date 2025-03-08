@@ -7,37 +7,16 @@
 #include "ActionQueue.hpp"
 #include "GUI.hpp"
 #include "Action.hpp"
+#include "CreatureFactory.hpp"
 
 
 static const int FOV_RADIUS = 10;
 
-Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0) {
-    TCODConsole::initRoot(screenWidth, screenHeight, "kek", true, TCOD_RENDERER_SDL);
-    player = new Entity(0, 0, '@', TCODColor::white, "Hero", true);
-    player->controller = new PlayerController(player);
-    player->being = new Being(
-        player,
-        1, // lvl,
-        50, // baseHp,
-        50, // baseStamina,
-        10, // strength,
-        10, // health,
-        10, // agility,
-        10, // endurance
-        1
-    );
-    player->being->updateHp(player->being->getMaxHp());
-    player->being->updateStamina(player->being->getMaxStamina());
-    map = MapGenerator::generate(1, 90, 62);
-    map->enterFromUp(player);
+Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0), currentMapId(-1) {
+    TCODConsole::initRoot(screenWidth, screenHeight, "kek", false, TCOD_RENDERER_SDL);
     gui = new GUI();
-    computeFOV();
-    actions = new ActionQueue();
-    // initialize actions
-    for(Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
-        Entity* entity = *iter;
-        entity->update();
-    }
+    player = CreatureFactory::newPlayer();
+    toNextMap();
 }
 
 Engine::~Engine() {
@@ -61,7 +40,14 @@ void Engine::update() {
     int cellHeight = windowHeight / screenHeight;
     mouseCellX = mouse.x / cellWidth;
     mouseCellY = mouse.y / cellHeight;
-
+    if (state == UPSTAIRS) {
+        toPreviousMap();
+        state = INPUT;
+    }
+    if (state == DOWNSTAIRS) {
+        toNextMap();
+        state = INPUT;
+    }
     if (state == INPUT) {
         player->update();
         return;
@@ -103,11 +89,14 @@ void Engine::renderMap() {
 void Engine::renderEntities() {
     for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
         Entity* entity = *iter;
-        if (isInFOV(entity->x, entity->y)) {
+        if (entity != player && isInFOV(entity->x, entity->y)) {
             TCODConsole::root->setChar(entity->x, entity->y, entity->symbol);
             TCODConsole::root->setCharForeground(entity->x, entity->y, entity->color);
         }
     }
+    // render player above everything else
+    TCODConsole::root->setChar(player->x, player->y, player->symbol);
+    TCODConsole::root->setCharForeground(player->x, player->y, player->color);
 }
 
 void Engine::computeFOV() {
@@ -166,4 +155,48 @@ Entity* Engine::getStairsEntityByCoord(int x, int y) {
         }
     }
     return NULL;
+}
+
+void Engine::toNextMap() {
+    if (this->map) {
+        this->map->exit(player);
+    }
+    Map* map;
+    if (maps.size() - 1 == currentMapId) {
+        map = newMap(player->being->lvl);
+        maps.push(map);
+    } else {
+        map = maps.get(currentMapId);
+    }
+    map->enterFromUp(player);
+    currentMapId++;
+    initMap(map);
+}
+
+void Engine::toPreviousMap() {
+    this->map->exit(player);
+    if (currentMapId == 0) {
+        gui->message(TCODColor::purple, "Coward!");
+        return;
+    }
+    currentMapId--;
+    Map* map = maps.get(currentMapId);
+    map->enterFromDown(player);
+    initMap(map);
+}
+
+void Engine::initMap(Map* map) {
+    if (actions) delete actions;
+    actions = new ActionQueue();
+    this->map = map;
+    computeFOV();
+    // initialize actions
+    for(Entity** iter = this->map->entities.begin(); iter != this->map->entities.end(); iter++) {
+        Entity* entity = *iter;
+        entity->update();
+    }
+}
+
+Map* Engine::newMap(int lvl) {
+    return map = MapGenerator::generate(lvl, screenWidth, screenHeight - GUI::PANEL_HEIGHT);
 }

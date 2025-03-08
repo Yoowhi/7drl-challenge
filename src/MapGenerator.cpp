@@ -95,7 +95,6 @@ void MapGenerator::createArea(int x1, int y1, int x2, int y2) {
         y1 = tmp;
     }
     static const TCODColor floor(100, 100, 100);
-    static const TCODColor wall(128, 128, 128);
     static const char* symbols = "'`.,";
     for (int tileX = x1; tileX <= x2; tileX++) {
         for (int tileY = y1; tileY <= y2; tileY++) {
@@ -142,13 +141,13 @@ void MapGenerator::createLoot(int x1, int y1, int x2, int y2) {
 
 Entity* MapGenerator::createStairs(Stairs::Direction direction, int x, int y) {
     Entity* entity;
-    switch (direction)
-    {
+    switch (direction) {
         case Stairs::UP:
             entity = new Entity(x, y, '<', TCODColor::lightAmber, "Stairs Up", false); break;
         case Stairs::DOWN:
-            Entity* entity = new Entity(x, y, '>', TCODColor::darkAmber, "Stairs Down", false); break;
-        default: throw std::runtime_error("Invalid choise in equipment ItemFactory");
+            entity = new Entity(x, y, '>', TCODColor::darkAmber, "Stairs Down", false); break;
+        default:
+            throw std::runtime_error("Invalid choise in equipment ItemFactory");
     }
     entity->stairs = new Stairs(direction);
     return entity;

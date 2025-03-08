@@ -1,8 +1,33 @@
 #include "libtcod.hpp"
-#include "CreatureFactory.hpp"
 #include "CreatureController.hpp"
+#include "PlayerController.hpp"
 #include "Being.hpp"
+#include "Container.hpp"
 #include "Entity.hpp"
+#include "CreatureFactory.hpp"
+#include "ItemFactory.hpp"
+
+Entity* CreatureFactory::newPlayer() {
+    Entity* player = new Entity(0, 0, '@', TCODColor::white, "Hero", true);
+    player->controller = new PlayerController(player);
+    player->being = new Being(
+        player,
+        1, // lvl,
+        50, // baseHp,
+        50, // baseStamina,
+        10, // strength,
+        10, // health,
+        10, // agility,
+        10, // endurance
+        1
+    );
+    player->inventory = new Container(player);
+    Entity* weapon = ItemFactory::_createTestingWeapon(20, 0, 0);
+    player->inventory->putIn(weapon->item);
+    player->being->updateHp(player->being->getMaxHp());
+    player->being->updateStamina(player->being->getMaxStamina());
+    return player;
+}
 
 
 Entity* CreatureFactory::randomCreature(int lvl, int x, int y) {
