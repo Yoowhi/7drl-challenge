@@ -5,7 +5,7 @@ class Item;
 
 class DropItemAction : public Action {
     public:
-        Item* item;
+        Item* item = nullptr;
 
         DropItemAction(Entity* actor, Item* item);
         void execute();

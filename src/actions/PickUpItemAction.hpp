@@ -5,7 +5,7 @@ class Item;
 
 class PickUpItemAction : public Action {
     public:
-        Item* item;
+        Item* item = nullptr;
 
         PickUpItemAction(Entity* actor, Item* item);
         void execute();

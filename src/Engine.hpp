@@ -16,12 +16,12 @@ class Engine {
         } state;
         int screenWidth, screenHeight;
         int fovRadius;
-        Map* map;
-        Entity* player;
+        Map* map = nullptr;
+        Entity* player = nullptr;
         TCOD_key_t lastKey;
         TCOD_mouse_t mouse;
         int mouseCellX, mouseCellY;
-        ActionQueue* actions;
+        ActionQueue* actions = nullptr;
         GUI* gui;
         int currentMapId;
         TCODList<Map*> maps;

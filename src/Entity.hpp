@@ -11,15 +11,15 @@ class Entity {
         int x, y;
         int symbol;
         TCODColor color;
-        char* name;
+        char* name = nullptr;
         bool blocks;
 
         // components
-        Controller* controller;
-        Being* being;
-        Container* inventory;
-        Item* item;
-        Stairs* stairs;
+        Controller* controller = nullptr;
+        Being* being = nullptr;
+        Container* inventory = nullptr;
+        Item* item = nullptr;
+        Stairs* stairs = nullptr;
 
         Entity(int x, int y, int symbol, TCODColor color, char* name, bool blocks);
         ~Entity();

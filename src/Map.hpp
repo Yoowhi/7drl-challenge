@@ -21,9 +21,9 @@ class Map {
         int upX, upY;
         int downX, downY;
         int lvl;
-        Tile* tiles;
+        Tile* tiles = nullptr;
         TCODList<Entity*> entities;
-        TCODMap* walkMap;
+        TCODMap* walkMap = nullptr;
 
         void enterFromUp(Entity* entity);
         void enterFromDown(Entity* entity);

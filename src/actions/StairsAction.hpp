@@ -5,7 +5,7 @@ class Stairs;
 
 class StairsAction : public Action {
     public:
-        Stairs* stairs;
+        Stairs* stairs = nullptr;
 
         StairsAction(Entity* actor, Stairs* stairs);
         void execute();

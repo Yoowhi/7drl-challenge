@@ -14,7 +14,7 @@ void EquipAction::execute() {
     if (extractedItem) {
         bool puttedIn = actor->inventory->putIn(extractedItem);
         if (!puttedIn) {
-            throw std::runtime_error("No place for extracted equipmend during EquipAction");
+            throw "No place for extracted equipmend during EquipAction";
         }
         engine.gui->message(TCODColor::azure, "%s equipped %s", actor->name, item->owner->name);
     }

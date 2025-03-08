@@ -6,7 +6,7 @@ class Entity;
 class ItemFactory {
     public:
         struct Metal {
-            const char* name;
+            const char* name = nullptr;
             TCODColor color;
         };
         static const int numMetals = 20;

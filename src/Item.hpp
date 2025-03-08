@@ -4,7 +4,7 @@ class Action;
 
 class Item {
     public:
-        Entity* owner;
+        Entity* owner = nullptr;
 
         Item(Entity* owner);
 

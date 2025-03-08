@@ -56,7 +56,7 @@ void GUI::render() {
 
 void GUI::renderInventory() {
     console->setDefaultForeground(TCODColor::darkestGrey);
-    console->print(INVENTORY_X + 3, 0, "%c", engine.lastKey.shift ? "Inventory: DROP" : "Inventory: USE" );
+    console->print(INVENTORY_X + 3, 0, "%s", engine.lastKey.shift ? "Inventory: DROP" : "Inventory: USE" );
     Container* container = engine.player->inventory;
     for (int i = 0; i < Container::CONTAINER_SIZE; i++) {
         Item* item = container->getItem(i);
@@ -76,7 +76,7 @@ Ctrl GUI::itemNumberToCtrl(int i) {
         case 2: return Ctrl::USE2;
         case 3: return Ctrl::USE3;
         case 4: return Ctrl::USE4;
-        default: throw std::runtime_error("Too high item index in GUI::itemNumberToCtrl");
+        default: throw "Too high item index in GUI::itemNumberToCtrl";
     }
 }
 

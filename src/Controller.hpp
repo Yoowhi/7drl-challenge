@@ -3,7 +3,7 @@ class Entity;
 
 class Controller {
     public:
-        Entity* owner;
+        Entity* owner = nullptr;
 
         Controller(Entity* owner);
         ~Controller();

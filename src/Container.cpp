@@ -23,7 +23,7 @@ bool Container::putIn(Item* item) {
 
 Item* Container::getItem(int id) {
     if (id >= CONTAINER_SIZE || id < 0) {
-        throw std::runtime_error("Requested item ID from Container is larger than CONTAINER_SIZE");
+        throw "Requested item ID from Container is larger than CONTAINER_SIZE";
     }
     return items[id];
 }
@@ -36,12 +36,12 @@ void Container::remove(Item* item) {
 
         }
     }
-    throw std::runtime_error("Requested item not found in Container");
+    throw "Requested item not found in Container";
 }
 
 Item* Container::getOut(int id) {
     if (id >= CONTAINER_SIZE || id < 0) {
-        throw std::runtime_error("Requested item ID from Container is larger than CONTAINER_SIZE");
+        throw "Requested item ID from Container is larger than CONTAINER_SIZE";
     }
     Item* item = items[id];
     items[id] = NULL;

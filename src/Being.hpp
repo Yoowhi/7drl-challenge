@@ -17,7 +17,7 @@ class Being {
         int endurance; // stamina
         Equipment equipment;
 
-        Entity* owner;
+        Entity* owner = nullptr;
 
         Being(
             Entity* owner,

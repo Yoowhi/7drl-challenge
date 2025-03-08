@@ -56,3 +56,13 @@ target_link_libraries(
         SDL2::SDL2main
         libtcod::libtcod
 )
+
+# Copy Data dir
+set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/data")
+set(OUTPUT_DIR "${PROJECT_BINARY_DIR}/bin/data")
+file(MAKE_DIRECTORY ${OUTPUT_DIR})
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${RESOURCE_DIR} ${OUTPUT_DIR}
+)

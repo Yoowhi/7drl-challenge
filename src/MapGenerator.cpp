@@ -147,7 +147,7 @@ Entity* MapGenerator::createStairs(Stairs::Direction direction, int x, int y) {
         case Stairs::DOWN:
             entity = new Entity(x, y, '>', TCODColor::darkAmber, "Stairs Down", false); break;
         default:
-            throw std::runtime_error("Invalid choise in equipment ItemFactory");
+            throw "Invalid choise in equipment ItemFactory";
     }
     entity->stairs = new Stairs(direction);
     return entity;

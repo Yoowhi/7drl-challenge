@@ -5,7 +5,7 @@ class PotionItem;
 
 class DrinkPotionAction : public Action {
     public:
-        PotionItem* item;
+        PotionItem* item = nullptr;
 
         DrinkPotionAction(Entity* actor, PotionItem* item);
         void execute();

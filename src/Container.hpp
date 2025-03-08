@@ -4,9 +4,9 @@ class Item;
 
 class Container {
     public:
-        Entity* owner;
+        Entity* owner = nullptr;
         static const int CONTAINER_SIZE = 5;
-        Item* items[CONTAINER_SIZE];
+        Item* items[CONTAINER_SIZE] = {nullptr};
 
         Container(Entity* owner);
         ~Container();

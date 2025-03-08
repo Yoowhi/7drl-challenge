@@ -3,7 +3,7 @@ class Entity;
 
 class Action {
     public:
-        Entity* actor;
+        Entity* actor = nullptr;
         int time;
         int timeLeft;
 

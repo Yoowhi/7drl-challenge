@@ -14,7 +14,7 @@ class GUI {
     private:
         TCODConsole* console;
         struct Message {
-            char* text;
+            char* text = nullptr;
             TCODColor col;
             Message(const char* text, const TCODColor& col);
             ~Message();

@@ -5,7 +5,7 @@ class Entity;
 
 class EquipAction : public Action {
     public:
-        EquipmentItem* item;
+        EquipmentItem* item = nullptr;
 
         EquipAction(Entity* actor, EquipmentItem* item);
         void execute();

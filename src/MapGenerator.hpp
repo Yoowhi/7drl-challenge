@@ -13,7 +13,7 @@ class MapGenerator {
 
         MapGenerator(int lvl, int width, int height);
 
-        Map* map;
+        Map* map = nullptr;
         int lvl;
 
         void createArea(int x1, int y1, int x2, int y2);

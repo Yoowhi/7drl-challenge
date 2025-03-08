@@ -20,7 +20,7 @@ Entity* ItemFactory::createEquipmentItem(int lvl, int x, int y) {
         case 2: return createChestItem(lvl, x, y, metal, rarity);
         case 3: return createGlovesItem(lvl, x, y, metal, rarity);
         case 4: return createBootsItem(lvl, x, y, metal, rarity);
-        default: throw std::runtime_error("Invalid choise in equipment ItemFactory");
+        default: throw "Invalid choise in equipment ItemFactory";
     }
 }
 
@@ -61,7 +61,7 @@ Entity* ItemFactory::createWeaponItem(int lvl, int x, int y, ItemFactory::Metal 
             weight = 4;
             break;
         default:
-            throw std::runtime_error("Invalid weapon in equipment ItemFactory");
+            throw "Invalid weapon in equipment ItemFactory";
     }
     Entity* entity = new Entity(x, y, symbol, metal.color, concatenate(metal.name, name), false);
     EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::WEAPON);
@@ -140,7 +140,7 @@ int ItemFactory::getRarityLvlModifier(EquipmentItem::Rarity rarity) {
         case EquipmentItem::RARE: return 4;
         case EquipmentItem::EPIC: return 6;
         case EquipmentItem::LEGENDARY: return 8;
-        default: throw std::runtime_error("Unknown rarity in equipment ItemFactory");
+        default: throw "Unknown rarity in equipment ItemFactory";
     }
 }
 
