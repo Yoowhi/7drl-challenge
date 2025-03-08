@@ -15,6 +15,7 @@ static const int FOV_RADIUS = 10;
 Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0), currentMapId(-1) {
     TCODConsole::initRoot(screenWidth, screenHeight, "Endless Dungeon", false, TCOD_RENDERER_SDL);
     TCODConsole::setCustomFont("./data/tileset.png",TCOD_FONT_LAYOUT_ASCII_INROW, 16, 16);
+    TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &lastKey, &mouse);
     //TCODSystem::setFps(25);
     gui = new GUI();
     player = CreatureFactory::newPlayer();
@@ -44,10 +45,12 @@ void Engine::update() {
     mouseCellY = mouse.y / cellHeight;
     if (state == UPSTAIRS) {
         toPreviousMap();
+        clearScreen();
         state = INPUT;
     }
     if (state == DOWNSTAIRS) {
         toNextMap();
+        clearScreen();
         state = INPUT;
     }
     if (state == INPUT) {
@@ -94,7 +97,7 @@ void Engine::clearScreen() {
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
             TCODConsole::root->setChar(x, y, ' ');
-            TCODConsole::root->setCharForeground(x, y, TCODConsole::root->getDefaultBackground());
+            TCODConsole::root->setCharBackground(x, y, TCODConsole::root->getDefaultBackground());
         }
     }
 }
@@ -201,7 +204,6 @@ void Engine::toPreviousMap() {
 void Engine::initMap(Map* map) {
     if (actions) delete actions;
     actions = new ActionQueue();
-    clearScreen();
     this->map = map;
     computeFOV();
     // initialize actions

@@ -6,6 +6,5 @@ class Controller {
         Entity* owner = nullptr;
 
         Controller(Entity* owner);
-        ~Controller();
         virtual void update() = 0;
 };
