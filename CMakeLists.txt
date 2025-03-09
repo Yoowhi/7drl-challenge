@@ -7,7 +7,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 endif()
 
 project(
-    roguelike  # Project name, change this as needed.
+    EndlessDungeon  # Project name, change this as needed.
     LANGUAGES C CXX
 )
 
