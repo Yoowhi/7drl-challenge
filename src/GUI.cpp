@@ -7,15 +7,42 @@
 #include "Equipment.hpp"
 #include "items/EquipmentItem.hpp"
 #include "Map.hpp"
+#include "colors.h"
+#include "utility.hpp"
+#include <cmath>
 
-static const int BAR_WIDTH = 20;
-static const int EQUIPMENT_X = BAR_WIDTH + 2 + 1;
-static const int INVENTORY_X = EQUIPMENT_X + 34;
-static const int MSG_X = INVENTORY_X + 28;
-static const int MSG_HEIGHT = GUI::PANEL_HEIGHT - 1;
+static const tcod::ColorRGB BACKGROUND_COLOR = Color::darkestGrey;
+static const tcod::ColorRGB BORDER_COLOR = Color::darkerGrey;
+static const tcod::ColorRGB KEY_COLOR = Color::green;
+
+static const tcod::ColorRGB HEALTH_COLOR = Color::darkRed;
+static const tcod::ColorRGB HEALTH_BACKGROUND_COLOR = Color::darkerRed;
+static const tcod::ColorRGB STAMINA_COLOR = Color::darkGreen;
+static const tcod::ColorRGB STAMINA_BACKGROUND_COLOR = Color::darkerGreen;
+static const tcod::ColorRGB XP_COLOR = Color::darkSky;
+static const tcod::ColorRGB XP_BACKGROUND_COLOR = Color::darkerSky;
+
+static const int BARS_HEIGHT = 5;
+static const int STATS_HEIGHT = 10;
+static const int EQUIPMENT_HEIGHT = 10;
+static const int INVENTORY_HEIGHT = Container::CONTAINER_SIZE + 2;
+
+static const int BARS_Y = 1;
+static const int STATS_Y = BARS_Y + BARS_HEIGHT + 1;
+static const int EQUIPMENT_Y = STATS_Y + STATS_HEIGHT + 1;
+static const int INVENTORY_Y = EQUIPMENT_Y + EQUIPMENT_HEIGHT + 1;
+static const int MESSAGES_Y = INVENTORY_Y + INVENTORY_HEIGHT + 1;
+
+//static const int MESSAGES_HEIGHT = 0;
+
+
+// static const int EQUIPMENT_X = BAR_WIDTH + 2 + 1;
+// static const int INVENTORY_X = EQUIPMENT_X + 34;
+// static const int MSG_X = INVENTORY_X + 28;
+// static const int MSG_HEIGHT = GUI::PANEL_HEIGHT - 1;
 
 GUI::GUI() {
-    console = new TCODConsole(engine.screenWidth, PANEL_HEIGHT);
+    console = new tcod::Console{GUI_WIDTH, engine->screenHeightCells};
 }
 
 GUI::~GUI() {
@@ -23,185 +50,248 @@ GUI::~GUI() {
     messages.clearAndDelete();
 }
 
-GUI::Message::Message(const char* text, const TCODColor& col) : col(col) {
-    this->text = new char[strlen(text)];
-    strcpy(this->text,text);
-}
+GUI::Message::Message(std::string text, const tcod::ColorRGB& color) : text(text), color(color) {}
 
-GUI::Message::~Message() {
-    delete [] text;
-}
+GUI::Message::~Message() {}
 
 void GUI::render() {
-    console->setDefaultBackground(TCODColor::darkestGrey);
-    console->clear();
+    TCOD_console_set_default_background(console->get(), BACKGROUND_COLOR);
+    TCOD_console_clear(console->get());
 
-    console->setDefaultBackground(TCODColor::darkerGrey);
-    console->rect(0, 0, engine.screenWidth, 1, false, TCOD_BKGND_SET);
-    console->rect(EQUIPMENT_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
-    console->rect(MSG_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
-    console->rect(INVENTORY_X - 1, 0, 1, PANEL_HEIGHT, false, TCOD_BKGND_SET);
-    console->setDefaultBackground(TCODColor::darkestGrey);
-
-    renderBar(1, 2, BAR_WIDTH, (int)engine.player->being->hp, (int)engine.player->being->getMaxHp(), TCODColor::darkRed, TCODColor::darkestRed);
-    renderBar(1, 4, BAR_WIDTH, (int)engine.player->being->stamina, (int)engine.player->being->getMaxStamina(), TCODColor::darkGreen, TCODColor::darkestGreen);
-    renderBar(1, 6, BAR_WIDTH, engine.player->being->xp, engine.player->being->getMaxXp(), TCODColor::darkSky, TCODColor::darkestSky);
-    renderMessages();
-    renderMouseLook();
-    renderInventory();
+    renderBorders();
+    renderBars();
+    renderStats();
     renderEquipment();
+    renderInventory();
+    renderMessages();
+
+
+    renderMouseLook();
     //renderDebug();
-    TCODConsole::blit(console, 0, 0, engine.screenWidth, PANEL_HEIGHT, TCODConsole::root, 0, engine.screenHeight - PANEL_HEIGHT);
+
+    tcod::blit(*engine->console->get(), *console->get(), {engine->screenWidthCells - GUI_WIDTH, 0});
+}
+
+void GUI::renderBorders() {
+    tcod::draw_rect(*console->get(), {0, 0, GUI_WIDTH, 1}, 0, std::nullopt, BORDER_COLOR, TCOD_BKGND_SET);
+    tcod::draw_rect(*console->get(), {0, STATS_Y - 1, GUI_WIDTH, 1}, 0, std::nullopt, BORDER_COLOR, TCOD_BKGND_SET);
+    tcod::draw_rect(*console->get(), {0, EQUIPMENT_Y - 1, GUI_WIDTH, 1}, 0, std::nullopt, BORDER_COLOR, TCOD_BKGND_SET);
+    tcod::draw_rect(*console->get(), {0, INVENTORY_Y - 1, GUI_WIDTH, 1}, 0, std::nullopt, BORDER_COLOR, TCOD_BKGND_SET);
+    tcod::draw_rect(*console->get(), {0, MESSAGES_Y - 1, GUI_WIDTH, 1}, 0, std::nullopt, BORDER_COLOR, TCOD_BKGND_SET);
+    tcod::draw_rect(*console->get(), {0, engine->screenHeightCells - 1, GUI_WIDTH, 1}, 0, std::nullopt, BORDER_COLOR, TCOD_BKGND_SET);
+    tcod::draw_rect(*console->get(), {0, 0, 1, engine->screenHeightCells}, 0, std::nullopt, BORDER_COLOR, TCOD_BKGND_SET);
+}
+
+void GUI::renderBars(){
+    drawBar(2, BARS_Y + 1, GUI_WIDTH - 3, (int)engine->player->being->hp, (int)engine->player->being->getMaxHp(), Color::darkRed, Color::darkestRed);
+    drawBar(2, BARS_Y + 3, GUI_WIDTH - 3, (int)engine->player->being->stamina, (int)engine->player->being->getMaxStamina(), Color::darkGreen, Color::darkestGreen);
+}
+
+void GUI::renderStats(){
+    drawStat(2, STATS_Y + 1, GUI_WIDTH - 6, "STRENGTH", tcod::stringf("%u", engine->player->being->strength));
+    drawStat(2, STATS_Y + 2, GUI_WIDTH - 6, "HEALTH", tcod::stringf("%u", engine->player->being->health));
+    drawStat(2, STATS_Y + 3, GUI_WIDTH - 6, "AGILITY", tcod::stringf("%u", engine->player->being->agility));
+    drawStat(2, STATS_Y + 4, GUI_WIDTH - 6, "ENDURANCE", tcod::stringf("%u", engine->player->being->endurance));
+    drawStat(2, STATS_Y + 6, GUI_WIDTH - 4, tcod::stringf("LVL: %u", engine->player->being->lvl), tcod::stringf("DEPTH: %u", engine->currentMapId + 1));
+    tcod::print(*console->get(), {2, STATS_Y + 8}, tcod::stringf("XP"), Color::white, std::nullopt);
+    drawBar(5, STATS_Y + 8, GUI_WIDTH - 6, engine->player->being->xp, engine->player->being->getMaxXp(), Color::darkSky, Color::darkestSky);
+
+
+    // tcod::print(*console->get(), {2, STATS_Y + 1}, tcod::stringf("STRENGTH"), Color::white, std::nullopt);
+    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 1}, tcod::stringf("%u", engine->player->being->strength), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
+
+    // tcod::print(*console->get(), {2, STATS_Y + 2}, tcod::stringf("HEALTH"), Color::white, std::nullopt);
+    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 2}, tcod::stringf("%u", engine->player->being->health), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
+
+    // tcod::print(*console->get(), {2, STATS_Y + 3}, tcod::stringf("AGILITY"), Color::white, std::nullopt);
+    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 3}, tcod::stringf("%u", engine->player->being->agility), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
+
+    // tcod::print(*console->get(), {2, STATS_Y + 4}, tcod::stringf("ENDURANCE"), Color::white, std::nullopt);
+    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 4}, tcod::stringf("%u", engine->player->being->endurance), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
+
+    // tcod::print(*console->get(), {2, STATS_Y + 6}, tcod::stringf("LVL: %u", engine->player->being->lvl), Color::white, std::nullopt);
+    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 4}, tcod::stringf("Depth: %u", engine->currentMapId + 1), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
+
+    // tcod::print(*console->get(), {2, STATS_Y + 8}, tcod::stringf("XP"), Color::white, std::nullopt);
+    // drawBar(6, STATS_Y + 5, GUI_WIDTH - 2, engine->player->being->xp, engine->player->being->getMaxXp(), Color::darkSky, Color::darkestSky);
+
+}
+
+void GUI::renderEquipment() {
+    Equipment& equipment = engine->player->being->equipment;
+
+    EquipmentItem* weapon = equipment.getItem(EquipmentItem::WEAPON);
+    if (weapon) {
+        drawStat(2, EQUIPMENT_Y + 1, GUI_WIDTH - 4, tcod::stringf("WEAPON - %s", weapon->owner->name), weapon->getPrintMainStat(engine->player->being));
+    } else {
+        tcod::print(*console->get(), {2, EQUIPMENT_Y + 1}, tcod::stringf("WEAPON - "), Color::white, std::nullopt);
+    }
+
+    EquipmentItem* head = equipment.getItem(EquipmentItem::HELMET);
+    if (head) {
+        drawStat(2, EQUIPMENT_Y + 2, GUI_WIDTH - 4, tcod::stringf("HEAD   - %s", head->owner->name), head->getPrintMainStat(engine->player->being));
+    } else {
+        tcod::print(*console->get(), {2, EQUIPMENT_Y + 2}, tcod::stringf("HEAD   - "), Color::white, std::nullopt);
+    }
+
+    EquipmentItem* chest = equipment.getItem(EquipmentItem::CHEST);
+    if (chest) {
+        drawStat(2, EQUIPMENT_Y + 3, GUI_WIDTH - 4, tcod::stringf("CHEST  - %s", chest->owner->name), chest->getPrintMainStat(engine->player->being));
+    } else {
+        tcod::print(*console->get(), {2, EQUIPMENT_Y + 3}, tcod::stringf("CHEST  - "), Color::white, std::nullopt);
+    }
+
+    EquipmentItem* gloves = equipment.getItem(EquipmentItem::GLOVES);
+    if (gloves) {
+        drawStat(2, EQUIPMENT_Y + 4, GUI_WIDTH - 4, tcod::stringf("GLOVES - %s", gloves->owner->name), gloves->getPrintMainStat(engine->player->being));
+    } else {
+        tcod::print(*console->get(), {2, EQUIPMENT_Y + 4}, tcod::stringf("GLOVES - "), Color::white, std::nullopt);
+    }
+
+    EquipmentItem* boots = equipment.getItem(EquipmentItem::BOOTS);
+    if (boots) {
+        drawStat(2, EQUIPMENT_Y + 5, GUI_WIDTH - 3, tcod::stringf("BOOTS  - %s", boots->owner->name), boots->getPrintMainStat(engine->player->being));
+    } else {
+        tcod::print(*console->get(), {2, EQUIPMENT_Y + 5}, tcod::stringf("BOOTS  - "), Color::white, std::nullopt);
+    }
+
+    drawStat(2, EQUIPMENT_Y + 7, GUI_WIDTH - 4, "DEFENSE: ", tcod::stringf("%d", engine->player->being->getDefense()));
+    std::string dmgString;
+    if (weapon) {
+        dmgString = weapon->getPrintMainStat(engine->player->being);
+    } else {
+        int minDamage, maxDamage;
+        float mult = engine->player->being->getDamageMultiplier();
+        minDamage = engine->player->being->getMinHandDamage() * mult;
+        maxDamage = engine->player->being->getMaxHandDamage() * mult;
+        dmgString = tcod::stringf("%d-%d", minDamage, maxDamage);
+    }
+    drawStat(2, EQUIPMENT_Y + 8, GUI_WIDTH - 4, "ATTACK: ", dmgString);
 }
 
 void GUI::renderInventory() {
-    console->setDefaultForeground(TCODColor::darkestGrey);
-    console->print(INVENTORY_X + 3, 0, "%s", engine.lastKey.shift ? "Inventory: DROP" : "Inventory: USE" );
-    Container* container = engine.player->inventory;
     for (int i = 0; i < Container::CONTAINER_SIZE; i++) {
-        Item* item = container->getItem(i);
+        Item* item = engine->player->inventory->items[i];
         if (item) {
-            console->setDefaultForeground(TCODColor::darkGreen);
-            console->print(INVENTORY_X + 1, 2 + i, "%c", itemNumberToCtrl(i));
-            console->setDefaultForeground(TCODColor::white);
-            console->print(INVENTORY_X + 3, 2 + i, "%s", item->owner->name);
+            auto& tile = console->at({2, INVENTORY_Y + 1 + i});
+            tile.ch = itemNumberToKeycode(i);
+            tile.fg = KEY_COLOR;
+            drawStat(4, INVENTORY_Y + 1 + i, GUI_WIDTH - 6, tcod::stringf(item->owner->name), item->getPrintMainStat(engine->player->being));
         }
     }
 }
 
-Ctrl GUI::itemNumberToCtrl(int i) {
+SDL_Keycode GUI::itemNumberToKeycode(int i) {
     switch (i) {
-        case 0: return Ctrl::USE0;
-        case 1: return Ctrl::USE1;
-        case 2: return Ctrl::USE2;
-        case 3: return Ctrl::USE3;
-        case 4: return Ctrl::USE4;
-        default: throw "Too high item index in GUI::itemNumberToCtrl";
+        case 0: return SDL_GetKeyFromScancode(Ctrl::USE0);
+        case 1: return SDL_GetKeyFromScancode(Ctrl::USE1);
+        case 2: return SDL_GetKeyFromScancode(Ctrl::USE2);
+        case 3: return SDL_GetKeyFromScancode(Ctrl::USE3);
+        case 4: return SDL_GetKeyFromScancode(Ctrl::USE4);
+        default: throw "Too high item index in GUI::itemNumberToKeycode";
     }
 }
 
-void GUI::renderEquipment() {
-    console->setDefaultForeground(TCODColor::white);
-    Equipment& equipment = engine.player->being->equipment;
-    EquipmentItem* weapon = equipment.getItem(EquipmentItem::WEAPON);
-    if (weapon) {
-        console->print(EQUIPMENT_X + 1, 2, "WEAPON: %s", weapon->owner->name);
-    } else {
-        console->print(EQUIPMENT_X + 1, 2, "WEAPON: -");
-    }
-    EquipmentItem* head = equipment.getItem(EquipmentItem::HELMET);
-    if (head) {
-        console->print(EQUIPMENT_X + 1, 3, "HEAD  : %s", head->owner->name);
-    } else {
-        console->print(EQUIPMENT_X + 1, 3, "HEAD  : -");
-    }
-    EquipmentItem* chest = equipment.getItem(EquipmentItem::CHEST);
-    if (chest) {
-        console->print(EQUIPMENT_X + 1, 4, "CHEST : %s", chest->owner->name);
-    } else {
-        console->print(EQUIPMENT_X + 1, 4, "CHEST : -");
-    }
-    EquipmentItem* gloves = equipment.getItem(EquipmentItem::GLOVES);
-    if (gloves) {
-        console->print(EQUIPMENT_X+ 1, 5, "GLOVES: %s", gloves->owner->name);
-    } else {
-        console->print(EQUIPMENT_X + 1, 5, "GLOVES: -");
-    }
-    EquipmentItem* boots = equipment.getItem(EquipmentItem::BOOTS);
-    if (boots) {
-        console->print(EQUIPMENT_X + 1, 6, "BOOTS : %s", boots->owner->name);
-    } else {
-        console->print(EQUIPMENT_X + 1, 6, "BOOTS : -");
-    }
-}
+
 
 void GUI::renderMessages() {
-    int y = 1;
+    int y = 0;
+    bool isFilled = false;
+    int MESSAGES_HEIGHT = engine->screenHeightCells - MESSAGES_Y;
     float colorCoef = 1.0f;
+    float colorStep = colorCoef / (MESSAGES_HEIGHT);
     for (Message** iterator = messages.begin(); iterator != messages.end(); iterator++) {
         Message* message = *iterator;
-        console->setDefaultForeground(message->col * colorCoef);
-        console->print(MSG_X, y, message->text);
-        y++;
-        if ( colorCoef > 0.3f ) {
-            colorCoef -= 0.15f;
+        int rows = (int)ceilf((float)message->text.size() / (float)(GUI_WIDTH - 1));
+        if (y + rows >= MESSAGES_HEIGHT) {
+            rows = y + rows - MESSAGES_HEIGHT;
+            isFilled = true;
+            if (rows == 0) {
+                return;
+            }
+        }
+        tcod::print_rect(*console->get(), {1, MESSAGES_Y + y, GUI_WIDTH - 1, rows}, message->text, message->color, std::nullopt);
+        y += rows;
+        if ( colorCoef > colorStep ) {
+            colorCoef -= colorStep;
         }
     }
 }
 
 void GUI::renderDebug() {
-    console->setDefaultForeground(TCODColor::white);
-    console->print(0, 7, "%u", TCODSystem::getFps());
-    console->print(6, 7, "%u:%u", engine.mouseCellX, engine.mouseCellY);
-    console->print(16, 7, "%u:%u", engine.mouse.x, engine.mouse.y);
-    int windowWidth, windowHeight;
-    TCODSystem::getCurrentResolution(&windowWidth, &windowHeight);
-    console->print(26, 7, "%u:%u", windowWidth, windowHeight);
+
+    // console->setDefaultForeground(Color::white);
+    // console->print(0, 7, "%u", TCODSystem::getFps());
+    // console->print(6, 7, "%u:%u", engine->controls_mouseCellX, engine->controls_mouseCellY);
+    // console->print(16, 7, "%u:%u", engine->controls_mouseCellX, engine->controls_mouseCellY);
+    // int windowWidth, windowHeight;
+    // TCODSystem::getCurrentResolution(&windowWidth, &windowHeight);
+    // console->print(26, 7, "%u:%u", windowWidth, windowHeight);
 }
 
-void GUI::renderBar(
+void debugString(std::string str, int x) {
+    tcod::print(*engine->console->get(), {x, 0}, str, Color::green, Color::black);
+}
+
+void GUI::message(const tcod::ColorRGB &color, std::string text) {
+    // https://www.roguebasin.com/index.php/Complete_roguelike_tutorial_using_C%2B%2B_and_libtcod_-_part_7:_the_GUI#:~:text=maxValue)%3B%0A%7D-,The%20message%20log,-We%20want%20a
+    int MESSAGES_HEIGHT = engine->screenHeightCells - MESSAGES_Y;
+    if (messages.size() >= MESSAGES_HEIGHT) {
+        Message* toRemove = messages.pop();
+        delete toRemove;
+    }
+    Message* msg = new Message(text, color);
+    messages.insertBefore(msg, 0);
+}
+
+void GUI::renderMouseLook() {
+    if (!engine->isInFOV(engine->input.mouseCellX, engine->input.mouseCellY)) {
+        return;
+    }
+    std::string names;
+    bool first = true;
+    for (Entity** it = engine->map->entities.begin(); it != engine->map->entities.end(); it++) {
+        Entity* entity = *it;
+        if (entity->x == engine->input.mouseCellX && entity->y == engine->input.mouseCellY ) {
+            if (!first) {
+                names += ", ";
+            }
+            names += entity->name;
+            first = false;
+        }
+    }
+    tcod::print(*console->get(), {0, 0}, names, std::nullopt, std::nullopt);
+}
+
+
+// void GUI::drawRect(int x, int y, int w, int h, tcod::ColorRGB& color) {
+//     for (int pointY = y; pointY < y + h; pointY++) {
+//         for (int pointX = x; pointX < x + w; pointX++) {
+//             auto& tile = console->at({x, y});
+//             tile.bg = color;
+//         }
+//     }
+// }
+
+void GUI::drawBar(
     int x, int y,
     int width,
     float value,
     float maxValue,
-    const TCODColor& barColor,
-    const TCODColor& backColor
+    const tcod::ColorRGB& barColor,
+    const tcod::ColorRGB& backColor
 ) {
-    console->setDefaultBackground(backColor);
-    console->rect(x, y, width, 1, false, TCOD_BKGND_SET);
+    tcod::draw_rect(*console->get(), {x, y, width, 1}, 0, std::nullopt, backColor, TCOD_BKGND_SET);
     int barWidth = (int)(value / maxValue * width);
     if (barWidth > 0) {
-        console->setDefaultBackground(barColor);
-        console->rect(x, y, barWidth, 1, false, TCOD_BKGND_SET);
+        tcod::draw_rect(*console->get(), {x, y, barWidth, 1}, 0, std::nullopt, barColor, TCOD_BKGND_SET);
     }
-    console->setDefaultForeground(TCODColor::white);
-    console->printEx(x + width / 2, y, TCOD_BKGND_NONE,TCOD_CENTER, "%g/%g", value, maxValue);
+    if (value >= 0 && maxValue >= 0) {
+        tcod::print_rect(*console->get(), {x, y, width, 1}, tcod::stringf("%g/%g", value, maxValue), Color::white,std::nullopt, TCOD_alignment_t::TCOD_CENTER);
+    }
 }
 
-void GUI::message(const TCODColor &col, const char *text, ...) {
-    // https://www.roguebasin.com/index.php/Complete_roguelike_tutorial_using_C%2B%2B_and_libtcod_-_part_7:_the_GUI#:~:text=maxValue)%3B%0A%7D-,The%20message%20log,-We%20want%20a
-    va_list ap;
-    char buf[128];
-    va_start(ap,text);
-    vsprintf(buf,text,ap);
-    va_end(ap);
-
-    char *lineBegin=buf;
-    char *lineEnd;
-
-    do {
-        // make room for the new message
-        if (messages.size() == MSG_HEIGHT) {
-            Message* toRemove = messages.pop();
-            delete toRemove;
-        }
-        lineEnd=strchr(lineBegin,'\n');
-        if ( lineEnd ) {
-            *lineEnd='\0';
-        }
-        Message *msg=new Message(lineBegin, col);
-        messages.insertBefore(msg, 0);
-        lineBegin = lineEnd + 1;
-    } while (lineEnd);
-}
-
-void GUI::renderMouseLook() {
-    if (!engine.isInFOV(engine.mouseCellX, engine.mouseCellY)) {
-        return;
-    }
-    char buf[128]="";
-    bool first=true;
-    for (Entity** it = engine.map->entities.begin(); it != engine.map->entities.end(); it++) {
-        Entity* entity = *it;
-        if (entity->x == engine.mouseCellX && entity->y == engine.mouseCellY ) {
-            if (!first) {
-                strcat(buf, ", ");
-            } else {
-                first = false;
-            }
-            strcat(buf, entity->name);
-        }
-    }
-    console->setDefaultForeground(TCODColor::white);
-    console->print(1, 0, buf);
+void GUI::drawStat(int x, int y, int w, std::string onLeft, std::string onRight) {
+    tcod::print(*console->get(), {x, y}, onLeft, Color::white, std::nullopt);
+    tcod::print(*console->get(), {x + w, y}, onRight, Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
 }

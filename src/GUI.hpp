@@ -1,37 +1,45 @@
 #pragma once
 #include "libtcod.hpp"
 #include "Ctrl.hpp"
+#include <string>
 
 class GUI {
     public:
-        static const int PANEL_HEIGHT = 8;
+        static const int GUI_WIDTH = 30;
 
         GUI();
         ~GUI();
         void render();
-        void message(const TCODColor &col, const char *text, ...);
+        void message(const tcod::ColorRGB &col, std::string text);
 
     private:
-        TCODConsole* console;
+        tcod::Console* console = nullptr;
         struct Message {
-            char* text = nullptr;
-            TCODColor col;
-            Message(const char* text, const TCODColor& col);
+            std::string text;
+            tcod::ColorRGB color;
+            Message(std::string text, const tcod::ColorRGB& col);
             ~Message();
         };
         TCODList<Message*> messages;
-        void renderBar(
+        void renderBorders();
+        void renderBars();
+        void renderStats();
+        void renderEquipment();
+        void renderInventory();
+        void renderMessages();
+
+        void renderMouseLook();
+        void renderDebug();
+
+        //void drawRect(int x, int y, int w, int h, tcod::ColorRGB& color);
+        void drawStat(int x, int y, int w, std::string onLeft, std::string onRight);
+        void drawBar(
             int x, int y,
             int width,
             float value,
             float maxValue,
-            const TCODColor& barColor,
-            const TCODColor& backColor
+            const tcod::ColorRGB& barColor,
+            const tcod::ColorRGB& backColor
         );
-        void renderMouseLook();
-        void renderMessages();
-        void renderInventory();
-        void renderEquipment();
-        void renderDebug();
-        Ctrl itemNumberToCtrl(int i);
+        SDL_Keycode itemNumberToKeycode(int i);
 };

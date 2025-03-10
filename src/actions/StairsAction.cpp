@@ -8,8 +8,8 @@ StairsAction::StairsAction(Entity* actor, Stairs* stairs) : Action(actor, -10000
 
 void StairsAction::execute() {
     switch (stairs->direction) {
-        case Stairs::UP: engine.state = Engine::UPSTAIRS; break;
-        case Stairs::DOWN: engine.state = Engine::DOWNSTAIRS; break;
+        case Stairs::UP: engine->state = Engine::UPSTAIRS; break;
+        case Stairs::DOWN: engine->state = Engine::DOWNSTAIRS; break;
         default: throw "Unknown Stairs direction";
     }
 }

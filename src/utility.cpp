@@ -20,3 +20,7 @@ int rnd(int from, int to, int mean) {
     TCODRandom* rng = TCODRandom::getInstance();
     return rng->getInt(from, to, mean);
 }
+
+tcod::ColorRGB multiplyColor(const tcod::ColorRGB color, float factor) {
+    return tcod::ColorRGB{(uint8_t)(color.r * factor), (uint8_t)(color.g * factor), (uint8_t)(color.b * factor)};
+}

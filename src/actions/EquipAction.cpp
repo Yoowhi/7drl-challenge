@@ -1,9 +1,11 @@
 #include "EquipAction.hpp"
+#include "libtcod.hpp"
 #include "../Entity.hpp"
 #include "../Container.hpp"
 #include "../Being.hpp"
 #include "../Engine.hpp"
 #include "../GUI.hpp"
+#include "../colors.h"
 
 
 EquipAction::EquipAction(Entity* actor, EquipmentItem* item) : Action(actor, 100), item(item) {}
@@ -16,7 +18,7 @@ void EquipAction::execute() {
         if (!puttedIn) {
             throw "No place for extracted equipmend during EquipAction";
         }
-        engine.gui->message(TCODColor::azure, "%s equipped %s", actor->name, item->owner->name);
+        engine->gui->message(Color::azure, tcod::stringf("%s equipped %s", actor->name, item->owner->name));
     }
 
     actor->being->restoreStamina(this->time);

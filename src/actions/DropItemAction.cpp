@@ -12,6 +12,6 @@ void DropItemAction::execute() {
     actor->inventory->remove(item);
     item->owner->x = actor->x;
     item->owner->y = actor->y;
-    engine.map->entities.push(item->owner);
+    engine->map->entities.push(item->owner);
     actor->being->restoreStamina(this->time);
 }

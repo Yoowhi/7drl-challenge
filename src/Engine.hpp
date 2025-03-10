@@ -1,5 +1,6 @@
 #pragma once
 #include "libtcod.hpp"
+#include "SDL.h"
 class ActionQueue;
 class Entity;
 class Map;
@@ -14,19 +15,31 @@ class Engine {
             DOWNSTAIRS,
             GAME_OVER,
         } state;
-        int screenWidth, screenHeight;
+        int screenWidthCells, screenHeightCells;
         int fovRadius;
+
+        struct Input {
+            bool keysPressed[SDL_NUM_SCANCODES] = { false };
+            bool anyKeyPressed = false;
+            SDL_Scancode lastKey;
+            int mouseCellX = 0;
+            int mouseCellY = 0;
+            bool shift = false;
+        } input;
+
+
+
+        int currentMapId;
+        SDL_Event event;
+        tcod::Console* console = nullptr;
+        tcod::Context* context = nullptr;
         Map* map = nullptr;
         Entity* player = nullptr;
-        TCOD_key_t lastKey;
-        TCOD_mouse_t mouse;
-        int mouseCellX, mouseCellY;
         ActionQueue* actions = nullptr;
         GUI* gui;
-        int currentMapId;
         TCODList<Map*> maps;
 
-        Engine(int screenWidth, int screenHeight);
+        Engine(int screenWidthCells, int screenHeightCells, tcod::Console* consol, tcod::Context* context);
         ~Engine();
 
         void start();
@@ -41,12 +54,12 @@ class Engine {
         void update();
         void render();
         void renderMap();
-        void clearScreen();
         void renderEntities();
         void toNextMap();
         void toPreviousMap();
         void initMap(Map* map);
         Map* newMap(int lvl);
+        bool isCharacterKey(SDL_Keycode keycode);
 };
 
-extern Engine engine;
+extern Engine* engine;

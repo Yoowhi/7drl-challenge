@@ -1,7 +1,9 @@
 #pragma once
 #include "../Item.hpp"
+#include <string>
 class Entity;
 class Action;
+class Being;
 
 class EquipmentItem : public Item {
     public:
@@ -27,4 +29,6 @@ class EquipmentItem : public Item {
         EquipmentItem(Entity* owner, Type type);
 
         Action* use(Entity* user);
+
+        std::string getPrintMainStat(Being* being);
 };

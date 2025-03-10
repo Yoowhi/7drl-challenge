@@ -1,5 +1,6 @@
 #pragma once
 #include "libtcod.hpp"
+#include <vector>
 class Entity;
 class Action;
 

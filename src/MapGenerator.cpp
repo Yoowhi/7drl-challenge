@@ -5,6 +5,7 @@
 #include "ItemFactory.hpp"
 #include "Map.hpp"
 #include "Entity.hpp"
+#include "colors.h"
 
 static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 4;
@@ -36,8 +37,8 @@ class BspListener : public ITCODBspCallback {
                     Entity* stairsUp = gen.createStairs(Stairs::UP, gen.map->upX, gen.map->upY);
                     gen.map->entities.push(stairsUp);
                     Tile* tileUp = gen.map->getTile(stairsUp->x, stairsUp->y);
-                    tileUp->backColor = tileUp->backColor * 0.7f;
-                    tileUp->backColorFaded = tileUp->backColorFaded * 0.7f;
+                    tileUp->backColor = multiplyColor(tileUp->backColor, 0.7f);
+                    tileUp->backColorFaded = multiplyColor(tileUp->backColorFaded, 0.7f);
                 }
                 lastX = x + w / 2;
                 lastY = y + h / 2;
@@ -78,8 +79,8 @@ Map* MapGenerator::generate(int lvl, int width, int height) {
     Entity* stairsDown = gen.createStairs(Stairs::DOWN, downX, downY);
     gen.map->entities.push(stairsDown);
     Tile* tileDown = gen.map->getTile(stairsDown->x, stairsDown->y);
-    tileDown->backColor = tileDown->backColor * 0.7f;
-    tileDown->backColorFaded = tileDown->backColorFaded * 0.7f;
+    tileDown->backColor = multiplyColor(tileDown->backColor, 0.7f);
+    tileDown->backColorFaded = multiplyColor(tileDown->backColorFaded, 0.7f);
     return gen.map;
 }
 
@@ -94,19 +95,19 @@ void MapGenerator::createArea(int x1, int y1, int x2, int y2) {
         y2 = y1;
         y1 = tmp;
     }
-    static const TCODColor floor(100, 100, 100);
+    static const tcod::ColorRGB floor = tcod::ColorRGB{100, 100, 100};
     static const char* symbols = "'`.,";
     for (int tileX = x1; tileX <= x2; tileX++) {
         for (int tileY = y1; tileY <= y2; tileY++) {
             Tile* tile = map->getTile(tileX, tileY);
             TCODRandom* rng = TCODRandom::getInstance();
             float mult = rng->getFloat(0.9f, 1.0f);
-            tile->backColor = floor * mult;
-            tile->backColorFaded = tile->backColor * 0.5f;
+            tile->backColor = multiplyColor(floor, mult);
+            tile->backColorFaded = multiplyColor(tile->backColor, 0.5f);
             int symbolId = rng->getInt(0, 40);
             if (symbolId < 4) {
-                tile->frontColor = tile->backColor * 0.9f;
-                tile->frontColorFaded = tile->frontColor * 0.5f;
+                tile->frontColor = multiplyColor(tile->backColor, 0.9f);
+                tile->frontColorFaded = multiplyColor(tile->frontColor, 0.5f);
                 tile->ch = symbols[symbolId];
             }
             map->walkMap->setProperties(tileX, tileY, true, true);
@@ -143,9 +144,9 @@ Entity* MapGenerator::createStairs(Stairs::Direction direction, int x, int y) {
     Entity* entity;
     switch (direction) {
         case Stairs::UP:
-            entity = new Entity(x, y, '<', TCODColor::lightAmber, "Stairs Up", false); break;
+            entity = new Entity(x, y, '<', Color::lightAmber, "Stairs Up", false); break;
         case Stairs::DOWN:
-            entity = new Entity(x, y, '>', TCODColor::darkAmber, "Stairs Down", false); break;
+            entity = new Entity(x, y, '>', Color::darkAmber, "Stairs Down", false); break;
         default:
             throw "Invalid choise in equipment ItemFactory";
     }

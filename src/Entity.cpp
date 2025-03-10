@@ -2,11 +2,13 @@
 #include "Controller.hpp"
 #include "Being.hpp"
 #include "Stairs.hpp"
+#include "Container.hpp"
+#include "Item.hpp"
 
-Entity::Entity(int x, int y, int symbol, TCODColor color, char* name, bool blocks)
+Entity::Entity(int x, int y, int symbol, tcod::ColorRGB color, char* name, bool blocks)
     : x(x), y(y), symbol(symbol), color(color), blocks(blocks) {
         this->name = new char[strlen(name)];
-        name = strcpy(this->name, name);
+        strcpy(this->name, name);
     }
 
 Entity::~Entity() {

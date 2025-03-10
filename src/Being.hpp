@@ -34,6 +34,9 @@ class Being {
 
         float getTimeMultiplier();
         float getDamageMultiplier();
+        float getMinHandDamage();
+        float getMaxHandDamage();
+        int getDefense();
         float getMaxHp();
         float getMaxStamina();
         void updateHp(float hp);

@@ -1,17 +1,19 @@
 #pragma once
 #include "libtcod.hpp"
 #include "MapGenerator.hpp"
+#include "colors.h"
+
 class Entity;
 
 struct Tile {
   int ch;
-  TCODColor frontColor;
-  TCODColor backColor;
-  TCODColor frontColorFaded;
-  TCODColor backColorFaded;
+  tcod::ColorRGB frontColor = Color::darkGrey;
+  tcod::ColorRGB backColor = Color::grey;
+  tcod::ColorRGB frontColorFaded = Color::darkestGrey;
+  tcod::ColorRGB backColorFaded = Color::darkerGrey;
   bool explored;
 
-  Tile() : explored(false), backColor(TCODColor(128, 128, 128)), frontColor(TCODColor(100, 100, 100)), backColorFaded(TCODColor(64, 64, 64)), frontColorFaded(TCODColor(50, 50, 50)) {};
+  Tile() : explored(false) {};
 };
 
 class Map {

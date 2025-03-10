@@ -6,9 +6,10 @@
 #include "Entity.hpp"
 #include "CreatureFactory.hpp"
 #include "ItemFactory.hpp"
+#include "colors.h"
 
 Entity* CreatureFactory::newPlayer() {
-    Entity* player = new Entity(0, 0, '@', TCODColor::white, "Hero", true);
+    Entity* player = new Entity(0, 0, '@', Color::white, "Hero", true);
     player->controller = new PlayerController(player);
     player->being = new Being(
         player,
@@ -45,7 +46,7 @@ Entity* CreatureFactory::randomCreature(int lvl, int x, int y) {
 }
 
 Entity* CreatureFactory::kobold(int lvl, int x, int y) {
-    Entity* kobold = new Entity(x, y, 'k', TCODColor::brass, "kobold", true);
+    Entity* kobold = new Entity(x, y, 'k', Color::brass, "kobold", true);
     kobold->controller = new CreatureController(kobold);
     kobold->being = new Being(
         kobold,
@@ -62,7 +63,7 @@ Entity* CreatureFactory::kobold(int lvl, int x, int y) {
 }
 
 Entity* CreatureFactory::goblin(int lvl, int x, int y) {
-    Entity* goblin = new Entity(x, y, 'g', TCODColor::darkGreen, "goblin", true);
+    Entity* goblin = new Entity(x, y, 'g', Color::darkGreen, "goblin", true);
     goblin->controller = new CreatureController(goblin);
     goblin->being = new Being(
         goblin,
@@ -79,7 +80,7 @@ Entity* CreatureFactory::goblin(int lvl, int x, int y) {
 }
 
 Entity* CreatureFactory::orc(int lvl, int x, int y) {
-    Entity* orc = new Entity(x, y, 'o', TCODColor::green, "orc", true);
+    Entity* orc = new Entity(x, y, 'o', Color::green, "orc", true);
     orc->controller = new CreatureController(orc);
     orc->being = new Being(
         orc,
@@ -96,7 +97,7 @@ Entity* CreatureFactory::orc(int lvl, int x, int y) {
 }
 
 Entity* CreatureFactory::troll(int lvl, int x, int y) {
-    Entity* troll = new Entity(x, y, 'T', TCODColor::cyan, "troll", true);
+    Entity* troll = new Entity(x, y, 'T', Color::cyan, "troll", true);
     troll->controller = new CreatureController(troll);
     troll->being = new Being(
         troll,

@@ -11,6 +11,8 @@ project(
     LANGUAGES C CXX
 )
 
+set(CMAKE_BUILD_TYPE Debug)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")  # Keep all runtime files in one directory.
 
 file(
@@ -36,24 +38,12 @@ else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 endif()
 
-if (EMSCRIPTEN)
-    # Attach data folder to Emscripten builds.
-    target_link_options(${PROJECT_NAME} PRIVATE --preload-file "${CMAKE_CURRENT_SOURCE_DIR}/data@data")
-    # Set output to html to generate preview pages, otherwise you'll have to make your own html.
-    set_target_properties(
-        ${PROJECT_NAME}
-        PROPERTIES
-            SUFFIX ".html"
-    )
-endif()
-
 find_package(SDL2 CONFIG REQUIRED)
 find_package(libtcod CONFIG REQUIRED)
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
         SDL2::SDL2
-        SDL2::SDL2main
         libtcod::libtcod
 )
 

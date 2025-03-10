@@ -1,6 +1,7 @@
 #include <unordered_map>
 #include "Container.hpp"
 #include "Item.hpp"
+#include "Entity.hpp"
 
 Container::Container(Entity* owner) : owner(owner) {}
 

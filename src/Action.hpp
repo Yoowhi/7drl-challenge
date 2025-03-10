@@ -8,5 +8,6 @@ class Action {
         int timeLeft;
 
         Action(Entity* actor, int time);
+        virtual ~Action() = default;
         virtual void execute() = 0;
 };

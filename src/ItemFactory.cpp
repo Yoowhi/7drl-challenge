@@ -2,6 +2,7 @@
 #include "ItemFactory.hpp"
 #include "items/PotionItem.hpp"
 #include "Entity.hpp"
+#include "colors.h"
 
 Entity* ItemFactory::createItem(int lvl, int x, int y) {
     int lvlModifier = rnd(0, 3);
@@ -154,7 +155,7 @@ Entity* ItemFactory::createPotionItem(int lvl, int x, int y) {
 }
 
 Entity* ItemFactory::createHealthPotionItem(int lvl, int x, int y) {
-    Entity* entity = new Entity(x, y, '`', TCODColor::darkRed, concatenate("Red", " potion"), false);
+    Entity* entity = new Entity(x, y, '`', Color::darkRed, concatenate("Red", " potion"), false);
     PotionItem* item = new PotionItem(entity);
     item->hp = 10 + lvl * 2;
     entity->item = item;
@@ -162,7 +163,7 @@ Entity* ItemFactory::createHealthPotionItem(int lvl, int x, int y) {
 }
 
 Entity* ItemFactory::createStaminaPotionItem(int lvl, int x, int y) {
-    Entity* entity = new Entity(x, y, '`', TCODColor::darkGreen, concatenate("Green", " potion"), false);
+    Entity* entity = new Entity(x, y, '`', Color::darkGreen, concatenate("Green", " potion"), false);
     PotionItem* item = new PotionItem(entity);
     item->stamina = 20 + lvl * 2;
     entity->item = item;
@@ -170,7 +171,7 @@ Entity* ItemFactory::createStaminaPotionItem(int lvl, int x, int y) {
 }
 
 Entity* ItemFactory::createRestorationPotionItem(int lvl, int x, int y) {
-    Entity* entity = new Entity(x, y, '`', TCODColor::purple, concatenate("Purple", " potion"), false);
+    Entity* entity = new Entity(x, y, '`', Color::purple, concatenate("Purple", " potion"), false);
     PotionItem* item = new PotionItem(entity);
     item->hp = 30 + lvl * 2;
     item->stamina = 60 + lvl * 2;
@@ -182,26 +183,26 @@ Entity* ItemFactory::createRestorationPotionItem(int lvl, int x, int y) {
 
 ItemFactory::Metal ItemFactory::getMetal(int lvl) {
     static const Metal metalColors[numMetals] = {
-        {"Bronze", TCODColor(205, 127, 50)},
-        {"Iron", TCODColor(183, 183, 183)},
-        {"Steel", TCODColor(192, 192, 192)},
-        {"Silver", TCODColor(192, 192, 192)},
-        {"Electrum", TCODColor(255, 223, 0)},
-        {"Gold", TCODColor(255, 215, 0)},
-        {"Moonsteel", TCODColor(169, 169, 255)},
-        {"Platinum", TCODColor(229, 228, 226)},
-        {"Titanium", TCODColor(135, 206, 235)},
-        {"Tungsten", TCODColor(169, 169, 169)},
-        {"Palladium", TCODColor(209, 209, 224)},
-        {"Mithril", TCODColor(173, 216, 230)},
-        {"Dragonsteel", TCODColor(255, 69, 0)},
-        {"Adamantium", TCODColor(112, 128, 144)},
-        {"Vibranium", TCODColor(0, 255, 255)},
-        {"Starmetal", TCODColor(72, 61, 139)},
-        {"Orichalcum", TCODColor(218, 165, 32)},
-        {"Frostsilver", TCODColor(176, 224, 230)},
-        {"Aetherium", TCODColor(123, 104, 238)},
-        {"Arcane", TCODColor(138, 43, 226)}
+        {"Bronze", tcod::ColorRGB{205, 127, 50}},
+        {"Iron", tcod::ColorRGB{183, 183, 183}},
+        {"Steel", tcod::ColorRGB{192, 192, 192}},
+        {"Silver", tcod::ColorRGB{192, 192, 192}},
+        {"Electrum", tcod::ColorRGB{255, 223, 0}},
+        {"Gold", tcod::ColorRGB{255, 215, 0}},
+        {"Moonsteel", tcod::ColorRGB{169, 169, 255}},
+        {"Platinum", tcod::ColorRGB{229, 228, 226}},
+        {"Titanium", tcod::ColorRGB{135, 206, 235}},
+        {"Tungsten", tcod::ColorRGB{169, 169, 169}},
+        {"Palladium", tcod::ColorRGB{209, 209, 224}},
+        {"Mithril", tcod::ColorRGB{173, 216, 230}},
+        {"Dragonsteel", tcod::ColorRGB{255, 69, 0}},
+        {"Adamantium", tcod::ColorRGB{112, 128, 144}},
+        {"Vibranium", tcod::ColorRGB{0, 255, 255}},
+        {"Starmetal", tcod::ColorRGB{72, 61, 139}},
+        {"Orichalcum", tcod::ColorRGB{218, 165, 32}},
+        {"Frostsilver", tcod::ColorRGB{176, 224, 230}},
+        {"Aetherium", tcod::ColorRGB{123, 104, 238}},
+        {"Arcane", tcod::ColorRGB{138, 43, 226}}
     };
 
     int i = (lvl - (lvl % 2)) / 2;

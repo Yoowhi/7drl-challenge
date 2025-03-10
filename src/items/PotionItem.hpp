@@ -2,6 +2,7 @@
 #include "../Item.hpp"
 class Entity;
 class Action;
+class Being;
 
 class PotionItem : public Item {
     public:
@@ -11,4 +12,5 @@ class PotionItem : public Item {
         PotionItem(Entity* owner);
 
         Action* use(Entity* user);
+        std::string getPrintMainStat(Being* being);
 };

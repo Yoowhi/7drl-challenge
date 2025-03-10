@@ -1,13 +1,14 @@
 #pragma once
 #include "libtcod.hpp"
 #include "items/EquipmentItem.hpp"
+#include "colors.h"
 class Entity;
 
 class ItemFactory {
     public:
         struct Metal {
             const char* name = nullptr;
-            TCODColor color;
+            tcod::ColorRGB color;
         };
         static const int numMetals = 20;
 

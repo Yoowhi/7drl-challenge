@@ -7,6 +7,7 @@
 #include "GUI.hpp"
 #include "ActionQueue.hpp"
 #include "math.h"
+#include "colors.h"
 
 static const int POINTS_PER_LVL = 3;
 static const int HP_PER_HEALTH_POINT = 2;
@@ -47,6 +48,24 @@ float Being::getTimeMultiplier() {
 
 float Being::getDamageMultiplier() {
     return 1.0f + (float)strength * 0.2f; // x20 damage at strength=100
+}
+
+int Being::getDefense() {
+    int defense = 0;
+    for (auto& item : equipment.items) {
+        if (item.second) {
+            defense += item.second->defence;
+        }
+    }
+    return defense;
+}
+
+float Being::getMinHandDamage() {
+    return 1.0f;
+}
+
+float Being::getMaxHandDamage() {
+    return 2.0f;
 }
 
 float Being::getMaxHp() {
@@ -128,15 +147,15 @@ void Being::incrementHealth() {
 
 void Being::die() {
     owner->blocks = false;
-    owner->color = TCODColor::darkestGrey;
-    Tile* tile = engine.map->getTile(owner->x, owner->y);
-    tile->backColor = TCODColor::darkerRed;
-    tile->backColorFaded = TCODColor::darkestRed;
-    engine.gui->message(TCODColor::white, "%s died", owner->name);
+    owner->color = Color::darkestGrey;
+    Tile* tile = engine->map->getTile(owner->x, owner->y);
+    tile->backColor = Color::darkerRed;
+    tile->backColorFaded = Color::darkestRed;
+    engine->gui->message(Color::white, tcod::stringf("%s died", owner->name));
     char* newName = concatenate("dead ", owner->name);
     delete[] owner->name;
     owner->name = newName;
-    engine.actions->clearFromActor(owner);
+    engine->actions->clearFromActor(owner);
 }
 
 int Being::getXpForKill() {

@@ -8,96 +8,119 @@
 #include "GUI.hpp"
 #include "Action.hpp"
 #include "CreatureFactory.hpp"
-
+#include "colors.h"
+#include "libtcod/timer.hpp"
 
 static const int FOV_RADIUS = 10;
 
-Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), state(INPUT), fovRadius(FOV_RADIUS), mouseCellX(0), mouseCellY(0), currentMapId(-1) {
-    TCODConsole::initRoot(screenWidth, screenHeight, "Endless Dungeon", false, TCOD_RENDERER_SDL);
-    TCODConsole::setCustomFont("./data/tileset.png",TCOD_FONT_LAYOUT_ASCII_INROW, 16, 16);
-    TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &lastKey, &mouse);
-    //TCODSystem::setFps(25);
-    gui = new GUI();
-    player = CreatureFactory::newPlayer();
-    toNextMap();
+Engine::Engine(int screenWidthCells, int screenHeightCells, tcod::Console* console, tcod::Context* context) : screenWidthCells(screenWidthCells), screenHeightCells(screenHeightCells), state(INPUT), fovRadius(FOV_RADIUS), currentMapId(0), console(console), context(context) {
 }
 
 Engine::~Engine() {
     delete map;
     delete actions;
     delete gui;
+    delete console;
 }
 
+int fps = 20;
+auto timer = tcod::Timer();
+
 void Engine::start() {
-    while (!TCODConsole::isWindowClosed()) {
+    gui = new GUI();
+    player = CreatureFactory::newPlayer();
+    toNextMap();
+    while (1 < 2) {
+        uint32_t currentTimeMs = SDL_GetTicks();
+        float currentTime = static_cast<float>(currentTimeMs) / 1000.f;
+        float deltaTime = timer.sync(fps);
+        while (SDL_PollEvent(&event)) {
+            context->convert_event_coordinates(event);
+            switch (event.type)
+            {
+                case SDL_QUIT:
+                    return;
+                case SDL_MOUSEMOTION:
+                    context->convert_event_coordinates(event);
+                    input.mouseCellX = event.motion.x;
+                    input.mouseCellY = event.motion.y;
+                    break;
+                case SDL_KEYDOWN:
+                // сохранять сканкоды, в GUI воспользоваться функцией конвертации в кейкод
+                    input.anyKeyPressed = true;
+                    input.keysPressed[event.key.keysym.scancode] = true;
+                    if (event.key.keysym.sym == SDLK_LSHIFT) {
+                        input.shift = true;
+                    }
+                    input.lastKey = event.key.keysym.scancode;
+                    break;
+                case SDL_KEYUP:
+                input.anyKeyPressed = false;
+                input.keysPressed[event.key.keysym.scancode] = false;
+                    if (event.key.keysym.sym == SDLK_LSHIFT) {
+                        input.shift = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
         update();
         render();
     }
 }
 
 void Engine::update() {
-    TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &lastKey, &mouse);
-    int windowWidth, windowHeight;
-    TCODSystem::getCurrentResolution(&windowWidth, &windowHeight);
-    int cellWidth = windowWidth / screenWidth;
-    int cellHeight = windowHeight / screenHeight;
-    mouseCellX = mouse.x / cellWidth;
-    mouseCellY = mouse.y / cellHeight;
-    if (state == UPSTAIRS) {
-        toPreviousMap();
-        clearScreen();
-        state = INPUT;
-    }
-    if (state == DOWNSTAIRS) {
-        toNextMap();
-        clearScreen();
-        state = INPUT;
-    }
     if (state == INPUT) {
         player->update();
         return;
     }
-    Action* action = actions->next();
-    if (!action) {
-        return;
-    }
-    action->execute();
-    if (action->actor == player) {
-        computeFOV();
-        if (state != UPSTAIRS & state != DOWNSTAIRS) {
+    while (state != INPUT) {
+        if (state == UPSTAIRS) {
+            toPreviousMap();
             state = INPUT;
         }
-    } else {
-        action->actor->update();
+        if (state == DOWNSTAIRS) {
+            toNextMap();
+            state = INPUT;
+        }
+        Action* action = actions->next();
+        if (!action) {
+            return;
+        }
+        action->execute();
+        if (action->actor == player) {
+            computeFOV();
+            if (state != UPSTAIRS && state != DOWNSTAIRS) {
+                state = INPUT;
+            }
+        } else {
+            action->actor->update();
+        }
+        delete action;
     }
-    delete action;
 }
 
 void Engine::render() {
+    TCOD_console_clear(console->get());
     renderMap();
     renderEntities();
     gui->render();
-    TCODConsole::flush();
+    context->present(*console);
 }
 
 void Engine::renderMap() {
-    for (int y = 0; y < map->height; y++) {
-        for (int x = 0; x < map->width; x++) {
-            Tile* tile = map->getTile(x, y);
-            if (isInFOV(x, y)) {
-                TCODConsole::root->putCharEx(x, y, tile->ch, tile->frontColor, tile->backColor);
-            } else if (isExplored(x, y)) {
-                TCODConsole::root->putCharEx(x, y, tile->ch, tile->frontColorFaded, tile->backColorFaded);
+    for (int y = 0; y < map->height; ++y) {
+        for (int x = 0; x < map->width; ++x) {
+            Tile* mapTile = map->getTile(x, y);
+            if (!mapTile) {
+                continue;
             }
-        }
-    }
-}
-
-void Engine::clearScreen() {
-    for (int y = 0; y < map->height; y++) {
-        for (int x = 0; x < map->width; x++) {
-            TCODConsole::root->setChar(x, y, ' ');
-            TCODConsole::root->setCharBackground(x, y, TCODConsole::root->getDefaultBackground());
+            auto& tile = console->at({x, y});
+            bool inFOV = isInFOV(x, y);
+            tile.ch = mapTile->ch;
+            tile.bg = inFOV ? mapTile->backColor : mapTile->explored ? mapTile->backColorFaded : Color::black;
+            tile.fg = inFOV ? mapTile->frontColor : mapTile->explored ? mapTile->frontColorFaded : Color::black;
         }
     }
 }
@@ -106,13 +129,15 @@ void Engine::renderEntities() {
     for (Entity** iter = map->entities.begin(); iter != map->entities.end(); iter++) {
         Entity* entity = *iter;
         if (entity != player && isInFOV(entity->x, entity->y)) {
-            TCODConsole::root->setChar(entity->x, entity->y, entity->symbol);
-            TCODConsole::root->setCharForeground(entity->x, entity->y, entity->color);
+            auto& tile = console->at({entity->x, entity->y});
+            tile.ch = entity->symbol;
+            tile.fg = entity->color;
         }
     }
     // render player above everything else
-    TCODConsole::root->setChar(player->x, player->y, player->symbol);
-    TCODConsole::root->setCharForeground(player->x, player->y, player->color);
+    auto& tile = console->at({player->x, player->y});
+    tile.ch = player->symbol;
+    tile.fg = player->color;
 }
 
 void Engine::computeFOV() {
@@ -178,7 +203,7 @@ void Engine::toNextMap() {
         this->map->exit(player);
     }
     Map* map = nullptr;
-    if (maps.size() - 1 == currentMapId) {
+    if (maps.size() == currentMapId) {
         map = newMap(player->being->lvl);
         maps.push(map);
     } else {
@@ -192,7 +217,7 @@ void Engine::toNextMap() {
 void Engine::toPreviousMap() {
     this->map->exit(player);
     if (currentMapId == 0) {
-        gui->message(TCODColor::purple, "Coward!");
+        gui->message(Color::purple, "Coward!");
         return;
     }
     currentMapId--;
@@ -214,5 +239,10 @@ void Engine::initMap(Map* map) {
 }
 
 Map* Engine::newMap(int lvl) {
-    return map = MapGenerator::generate(lvl, screenWidth, screenHeight - GUI::PANEL_HEIGHT);
+    return map = MapGenerator::generate(lvl, screenWidthCells - GUI::GUI_WIDTH, screenHeightCells);
+}
+
+bool Engine::isCharacterKey(SDL_Keycode keycode) {
+    // Check if the keycode corresponds to a printable ASCII character
+    return (keycode >= SDLK_SPACE && keycode <= SDLK_z);
 }
