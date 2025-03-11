@@ -95,26 +95,6 @@ void GUI::renderStats(){
     drawStat(2, STATS_Y + 6, GUI_WIDTH - 4, tcod::stringf("LVL: %u", engine->player->being->lvl), tcod::stringf("DEPTH: %u", engine->currentMapId + 1));
     tcod::print(*console->get(), {2, STATS_Y + 8}, tcod::stringf("XP"), Color::white, std::nullopt);
     drawBar(5, STATS_Y + 8, GUI_WIDTH - 6, engine->player->being->xp, engine->player->being->getMaxXp(), Color::darkSky, Color::darkestSky);
-
-
-    // tcod::print(*console->get(), {2, STATS_Y + 1}, tcod::stringf("STRENGTH"), Color::white, std::nullopt);
-    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 1}, tcod::stringf("%u", engine->player->being->strength), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
-
-    // tcod::print(*console->get(), {2, STATS_Y + 2}, tcod::stringf("HEALTH"), Color::white, std::nullopt);
-    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 2}, tcod::stringf("%u", engine->player->being->health), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
-
-    // tcod::print(*console->get(), {2, STATS_Y + 3}, tcod::stringf("AGILITY"), Color::white, std::nullopt);
-    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 3}, tcod::stringf("%u", engine->player->being->agility), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
-
-    // tcod::print(*console->get(), {2, STATS_Y + 4}, tcod::stringf("ENDURANCE"), Color::white, std::nullopt);
-    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 4}, tcod::stringf("%u", engine->player->being->endurance), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
-
-    // tcod::print(*console->get(), {2, STATS_Y + 6}, tcod::stringf("LVL: %u", engine->player->being->lvl), Color::white, std::nullopt);
-    // tcod::print(*console->get(), {GUI_WIDTH - 2, STATS_Y + 4}, tcod::stringf("Depth: %u", engine->currentMapId + 1), Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
-
-    // tcod::print(*console->get(), {2, STATS_Y + 8}, tcod::stringf("XP"), Color::white, std::nullopt);
-    // drawBar(6, STATS_Y + 5, GUI_WIDTH - 2, engine->player->being->xp, engine->player->being->getMaxXp(), Color::darkSky, Color::darkestSky);
-
 }
 
 void GUI::renderEquipment() {
