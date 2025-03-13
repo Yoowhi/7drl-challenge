@@ -129,7 +129,7 @@ void MapGenerator::createCreatures(int x1, int y1, int x2, int y2) {
 }
 
 void MapGenerator::createLoot(int x1, int y1, int x2, int y2) {
-    int loot = rnd(0, 2);
+    int loot = rnd(0, 1);
     for (int i = 0; i < loot; i++) {
         int randX = rnd(x1, x2);
         int randY = rnd(y1, y2);

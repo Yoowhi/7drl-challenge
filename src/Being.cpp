@@ -8,11 +8,15 @@
 #include "ActionQueue.hpp"
 #include "math.h"
 #include "colors.h"
+#include "Container.hpp"
+#include "items/HandsWeaponItem.hpp"
+#include "items/ArmorItem.hpp"
 
 static const int POINTS_PER_LVL = 3;
 static const int HP_PER_HEALTH_POINT = 2;
 static const int STAMINA_PER_ENDURANCE_POINT = 2;
-static const int STAMINA_TIME_DIVIDER = 100;
+static const float STAMINA_PER_TIME = 10.0f/200.0f;
+static const float DEFENSE_PER_TIME = 1.0f/400.0f;
 
 Being::Being(
     Entity* owner,
@@ -35,7 +39,10 @@ Being::Being(
     endurance(endurance),
     xpForKill(xpForKill),
     equipment(owner) {
+        Entity* entity = new Entity(0, 0, '!', Color::red, "Hands", false);
+        handsWeapon = new HandsWeaponItem(entity, this);
         equipment = Equipment(owner);
+        equipment.items[EquipmentItem::WEAPON] = handsWeapon;
         hp = baseHp;
         stamina = baseStamina;
     }
@@ -43,29 +50,39 @@ Being::Being(
 Being::~Being() {}
 
 float Being::getTimeMultiplier() {
-    return 1.0f - (float)agility * 0.005f; // half of time on agility=100
+    return 1.0f - ((float)agility / 200.0f) + (getSumWeight() / 200.0f); // half of time on agility=100, x2 time when weight=100
 }
 
 float Being::getDamageMultiplier() {
-    return 1.0f + (float)strength * 0.2f; // x20 damage at strength=100
+    return 1.0f + (float)strength * 0.1f; // x10 damage at strength=100
 }
 
-int Being::getDefense() {
+float Being::getMaxDefense() {
     int defense = 0;
     for (auto& item : equipment.items) {
         if (item.second) {
-            defense += item.second->defence;
+            auto armor = dynamic_cast<ArmorItem*>(item.second);
+            if (armor) {
+                defense += armor->defence;
+            }
         }
     }
-    return defense;
+    return (float)defense;
 }
 
-float Being::getMinHandDamage() {
-    return 1.0f;
-}
-
-float Being::getMaxHandDamage() {
-    return 2.0f;
+int Being::getSumWeight() {
+    int weight = 0;
+    for (auto& iter : equipment.items) {
+        if (iter.second) {
+            weight += iter.second->weight;
+        }
+    }
+    for(auto iter : owner->inventory->items) {
+        if (iter) {
+            weight += iter->weight;
+        }
+    }
+    return weight;
 }
 
 float Being::getMaxHp() {
@@ -73,7 +90,7 @@ float Being::getMaxHp() {
 }
 
 float Being::getMaxStamina() {
-    return baseStamina + HP_PER_HEALTH_POINT * health;
+    return baseStamina + STAMINA_PER_ENDURANCE_POINT * endurance;
 }
 
 void Being::updateHp(float hp) {
@@ -95,8 +112,18 @@ void Being::updateStamina(float stamina) {
     }
 }
 
-void Being::restoreStamina(int time) {
-    updateStamina(0.05f * getMaxStamina() * ((float)time / STAMINA_TIME_DIVIDER));
+void Being::updateDefense(float defense) {
+    this->defense += defense;
+    if (this->defense <= 0) {
+        this->defense = 0;
+    } else if (this->defense > getMaxDefense()) {
+        this->defense = getMaxDefense();
+    }
+}
+
+void Being::restoreStats(int time) {
+    updateStamina((float)time * STAMINA_PER_TIME);
+    updateDefense(getMaxDefense() * (float)time * DEFENSE_PER_TIME);
 }
 
 void Being::addXp(int amount) {
@@ -132,16 +159,43 @@ void Being::autoIncreaseAttributes(int lvlUps, int priorityStrength, int priorit
     }
 }
 
-void Being::incrementEndurance() {
-    endurance++;
-    if (stamina > 0) {
-        stamina += STAMINA_PER_ENDURANCE_POINT;
+
+
+void Being::incrementStrength() {
+    if (attributePoints <= 0) {
+        throw "Tried to increase attribute while points=0";
     }
+    strength++;
+    attributePoints--;
 }
+
 void Being::incrementHealth() {
+    if (attributePoints <= 0) {
+        throw "Tried to increase attribute while points=0";
+    }
     health++;
+    attributePoints--;
     if (hp > 0) {
         hp += HP_PER_HEALTH_POINT;
+    }
+}
+
+void Being::incrementAgility() {
+    if (attributePoints <= 0) {
+        throw "Tried to increase attribute while points=0";
+    }
+    agility++;
+    attributePoints--;
+}
+
+void Being::incrementEndurance() {
+    if (attributePoints <= 0) {
+        throw "Tried to increase attribute while points=0";
+    }
+    endurance++;
+    attributePoints--;
+    if (stamina > 0) {
+        stamina += STAMINA_PER_ENDURANCE_POINT;
     }
 }
 

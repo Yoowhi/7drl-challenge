@@ -18,8 +18,8 @@ void EquipAction::execute() {
         if (!puttedIn) {
             throw "No place for extracted equipmend during EquipAction";
         }
-        engine->gui->message(Color::azure, tcod::stringf("%s equipped %s", actor->name, item->owner->name));
+        engine->gui->message(Color::lightestBlue, tcod::stringf("%s equipped %s", actor->name, item->owner->name));
     }
 
-    actor->being->restoreStamina(this->time);
+    actor->being->restoreStats(this->time);
 }

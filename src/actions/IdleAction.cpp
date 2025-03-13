@@ -6,5 +6,5 @@ IdleAction::IdleAction(Entity* actor) : Action(actor, 100) {
 }
 
 void IdleAction::execute() {
-    actor->being->restoreStamina(this->time);
+    actor->being->restoreStats(this->time);
 }

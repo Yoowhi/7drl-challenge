@@ -15,5 +15,5 @@ void MoveAction::execute() {
     } else if (engine->map->canWalk(x, actor->y)) {
         actor->x = x;
     }
-    actor->being->restoreStamina(this->time);
+    actor->being->restoreStats(this->time);
 }

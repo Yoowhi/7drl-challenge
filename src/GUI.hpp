@@ -41,5 +41,9 @@ class GUI {
             const tcod::ColorRGB& barColor,
             const tcod::ColorRGB& backColor
         );
+        void drawDebugString(std::string str, int x);
+        template<typename Func>
+        void button(int x, int y, Func onClick);
+
         SDL_Keycode itemNumberToKeycode(int i);
 };

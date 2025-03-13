@@ -10,7 +10,11 @@ ActionQueue::~ActionQueue() {
 /**
  * @short Keeps order from biggest value of action->priority to lowest
  */
-void ActionQueue::add(Action* action) {
+void ActionQueue::add(Action* action, bool instant) {
+    if (instant) {
+        actions.push(action);
+        return;
+    }
     int i = 0;
     bool found = false;
     for (Action** iter = actions.begin(); iter != actions.end(); iter++) {

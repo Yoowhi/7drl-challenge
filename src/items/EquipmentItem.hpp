@@ -21,14 +21,8 @@ class EquipmentItem : public Item {
             EPIC,
             LEGENDARY
         } rarity;
-        float minDamage;
-        float maxDamage;
-        int defence;
-        int weight;
 
-        EquipmentItem(Entity* owner, Type type);
+        EquipmentItem(Entity* owner, Type type, int weight);
 
         Action* use(Entity* user);
-
-        std::string getPrintMainStat(Being* being);
 };

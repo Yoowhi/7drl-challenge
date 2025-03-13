@@ -1,6 +1,8 @@
 #include "utility.hpp"
 #include "ItemFactory.hpp"
 #include "items/PotionItem.hpp"
+#include "items/ArmorItem.hpp"
+#include "items/WeaponItem.hpp"
 #include "Entity.hpp"
 #include "colors.h"
 
@@ -31,6 +33,7 @@ Entity* ItemFactory::createWeaponItem(int lvl, int x, int y, ItemFactory::Metal 
     int minDamage;
     int maxDamage;
     int weight;
+    int attackSpeed;
     int weapon = rnd(0, 3);
     switch (weapon) {
         case 0:
@@ -39,6 +42,7 @@ Entity* ItemFactory::createWeaponItem(int lvl, int x, int y, ItemFactory::Metal 
             minDamage = 1;
             maxDamage = 2;
             weight = 1;
+            attackSpeed = 80;
             break;
         case 1:
             name = " sword";
@@ -46,6 +50,7 @@ Entity* ItemFactory::createWeaponItem(int lvl, int x, int y, ItemFactory::Metal 
             minDamage = 1;
             maxDamage = 3;
             weight = 2;
+            attackSpeed = 100;
             break;
         case 2:
             name = " axe";
@@ -53,74 +58,70 @@ Entity* ItemFactory::createWeaponItem(int lvl, int x, int y, ItemFactory::Metal 
             minDamage = 2;
             maxDamage = 4;
             weight = 3;
+            attackSpeed = 120;
             break;
         case 3:
             name = " mace";
             symbol = '*';
-            minDamage = 4;
-            maxDamage = 5;
+            minDamage = 3;
+            maxDamage = 4;
             weight = 4;
+            attackSpeed = 140;
             break;
         default:
             throw "Invalid weapon in equipment ItemFactory";
     }
     Entity* entity = new Entity(x, y, symbol, metal.color, concatenate(metal.name, name), false);
-    EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::WEAPON);
-    item->minDamage = minDamage + minDamage * (lvl + getRarityLvlModifier(rarity)) / 2;
-    item->maxDamage = maxDamage + maxDamage * (lvl + getRarityLvlModifier(rarity)) / 2;
-    int weightLvlModifier = lvl - getRarityLvlModifier(rarity);
-    if (weightLvlModifier <= 0) weightLvlModifier = 1;
-    item->weight = 1 + weight * (lvl - getRarityLvlModifier(rarity)) / 2;
+    weight = weight + (float)weight * (float)lvl / 10.0f;
+    minDamage = modifyStat(minDamage, lvl, rarity);
+    maxDamage = modifyStat(maxDamage, lvl, rarity);
+    EquipmentItem* item = new WeaponItem(entity, weight, minDamage, maxDamage, attackSpeed);
     entity->item = item;
     return entity;
 }
 
 Entity* ItemFactory::createHelmetItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity) {
     Entity* entity = new Entity(x, y, 'o', metal.color, concatenate(metal.name, " helmet"), false);
-    EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::HELMET);
-    item->defence = 4 * (lvl + getRarityLvlModifier(rarity)) / 2;
-    int weightLvlModifier = lvl - getRarityLvlModifier(rarity);
-    if (weightLvlModifier <= 0) weightLvlModifier = 1;
-    item->weight = 2 + 2 * (lvl - getRarityLvlModifier(rarity)) / 2;
+    int weight = modifyStat(2, lvl, EquipmentItem::COMMON);
+    int defense = modifyStat(2, lvl, rarity);
+    EquipmentItem* item = new ArmorItem(entity, EquipmentItem::HELMET, weight, defense);
     entity->item = item;
     return entity;
 }
 
 Entity* ItemFactory::createChestItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity) {
     Entity* entity = new Entity(x, y, '0', metal.color, concatenate(metal.name, " plate"), false);
-    EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::CHEST);
-    item->defence = 4 * (lvl + getRarityLvlModifier(rarity)) / 2;
-    int weightLvlModifier = lvl - getRarityLvlModifier(rarity);
-    if (weightLvlModifier <= 0) weightLvlModifier = 1;
-    item->weight = 4 + 4 * (lvl - getRarityLvlModifier(rarity)) / 2;
+    int weight = modifyStat(4, lvl, EquipmentItem::COMMON);
+    int defense = modifyStat(4, lvl, rarity);
+    EquipmentItem* item = new ArmorItem(entity, EquipmentItem::CHEST, weight, defense);
     entity->item = item;
     return entity;
 }
 
 Entity* ItemFactory::createGlovesItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity) {
     Entity* entity = new Entity(x, y, '"', metal.color, concatenate(metal.name, " gloves"), false);
-    EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::GLOVES);
-    item->defence = 1 * (lvl + getRarityLvlModifier(rarity)) / 2;
-    int weightLvlModifier = lvl - getRarityLvlModifier(rarity);
-    if (weightLvlModifier <= 0) weightLvlModifier = 1;
-    item->weight = 1 + 1 * (lvl - getRarityLvlModifier(rarity)) / 2;
+    int weight = modifyStat(1, lvl, EquipmentItem::COMMON);
+    int defense = modifyStat(1, lvl, rarity);
+    EquipmentItem* item = new ArmorItem(entity, EquipmentItem::GLOVES, weight, defense);;
     entity->item = item;
     return entity;
 }
 
 Entity* ItemFactory::createBootsItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity) {
     Entity* entity = new Entity(x, y, 'b', metal.color, concatenate(metal.name, " boots"), false);
-    EquipmentItem* item = new EquipmentItem(entity, EquipmentItem::BOOTS);
-    item->defence = 2 * (lvl + getRarityLvlModifier(rarity)) / 2;
-    int weightLvlModifier = lvl - getRarityLvlModifier(rarity);
-    if (weightLvlModifier <= 0) weightLvlModifier = 1;
-    item->weight = 1 + 1 * (lvl - getRarityLvlModifier(rarity)) / 2;
+    int weight = modifyStat(1, lvl, EquipmentItem::COMMON);
+    int defense = modifyStat(1, lvl, rarity);
+    EquipmentItem* item = new ArmorItem(entity, EquipmentItem::BOOTS, weight, defense);
     entity->item = item;
     return entity;
 }
 
-Entity* ItemFactory::_createTestingWeapon(int lvl, int x, int y) {
-    return createWeaponItem(lvl, x, y, getMetal(lvl), getRandomEquipmentRarity());
+Entity* ItemFactory::_createTestingWeapon(int lvl) {
+    return createWeaponItem(lvl, 0, 0, getMetal(lvl), getRandomEquipmentRarity());
+}
+
+Entity* ItemFactory::_createTestingArmor(int lvl) {
+    return createChestItem(lvl, 0, 0, getMetal(lvl), getRandomEquipmentRarity());
 }
 
 EquipmentItem::Rarity ItemFactory::getRandomEquipmentRarity() {
@@ -133,14 +134,14 @@ EquipmentItem::Rarity ItemFactory::getRandomEquipmentRarity() {
     return EquipmentItem::LEGENDARY;
 }
 
-int ItemFactory::getRarityLvlModifier(EquipmentItem::Rarity rarity) {
+float ItemFactory::getRarityModifier(EquipmentItem::Rarity rarity) {
     switch (rarity)
     {
-        case EquipmentItem::COMMON: return 0;
-        case EquipmentItem::UNCOMMON: return 2;
-        case EquipmentItem::RARE: return 4;
-        case EquipmentItem::EPIC: return 6;
-        case EquipmentItem::LEGENDARY: return 8;
+        case EquipmentItem::COMMON: return 1;
+        case EquipmentItem::UNCOMMON: return 1.3f;
+        case EquipmentItem::RARE: return 1.6f;
+        case EquipmentItem::EPIC: return 1.9f;
+        case EquipmentItem::LEGENDARY: return 2.5f;
         default: throw "Unknown rarity in equipment ItemFactory";
     }
 }
@@ -210,4 +211,9 @@ ItemFactory::Metal ItemFactory::getMetal(int lvl) {
         i = numMetals - 1;
     }
     return metalColors[i];
+}
+
+
+float ItemFactory::modifyStat(float value, int lvl, EquipmentItem::Rarity rarity) {
+    return value + value * (float)lvl / 20.0f * getRarityModifier(rarity);
 }

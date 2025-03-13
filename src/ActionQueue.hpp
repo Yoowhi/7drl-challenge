@@ -10,7 +10,7 @@ class ActionQueue {
 
         ActionQueue();
         ~ActionQueue();
-        void add(Action* action);
+        void add(Action* action, bool instant = false);
         void clearFromActor(Entity* actor);
         Action* next();
 };

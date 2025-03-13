@@ -4,7 +4,7 @@
 #include "../Stairs.hpp"
 #include "../Engine.hpp"
 
-StairsAction::StairsAction(Entity* actor, Stairs* stairs) : Action(actor, -1000000), stairs(stairs) {}
+StairsAction::StairsAction(Entity* actor, Stairs* stairs) : Action(actor, 0), stairs(stairs) {}
 
 void StairsAction::execute() {
     switch (stairs->direction) {

@@ -7,10 +7,11 @@ class Being;
 class Item {
     public:
         Entity* owner = nullptr;
+        int weight;
 
-        Item(Entity* owner);
+        Item(Entity* owner, int weight);
 
         virtual ~Item() = default;
         virtual Action* use(Entity* user) = 0;
-        virtual std::string getPrintMainStat(Being* being) = 0;
+        virtual std::string getPrintStats(Being* being) = 0;
 };

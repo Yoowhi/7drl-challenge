@@ -14,8 +14,8 @@ PickUpItemAction::PickUpItemAction(Entity* actor, Item* item) : Action(actor, 10
 void PickUpItemAction::execute() {
     bool pickedUp = actor->inventory->putIn(item);
     if (pickedUp) {
-        engine->gui->message(Color::azure, tcod::stringf("%s picked up %s", actor->name, item->owner->name));
+        engine->gui->message(Color::lightestBlue, tcod::stringf("%s picked up %s", actor->name, item->owner->name));
         engine->map->entities.remove(item->owner);
     }
-    actor->being->restoreStamina(this->time);
+    actor->being->restoreStats(this->time);
 }

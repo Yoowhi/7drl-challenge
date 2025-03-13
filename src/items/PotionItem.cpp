@@ -3,13 +3,13 @@
 #include "libtcod.hpp"
 #include "../Being.hpp"
 
-PotionItem::PotionItem(Entity* owner) : Item(owner) {}
+PotionItem::PotionItem(Entity* owner) : Item(owner, 0) {}
 
 Action* PotionItem::use(Entity* user) {
     return new DrinkPotionAction(user, this);
 }
 
-std::string PotionItem::getPrintMainStat(Being* being) {
+std::string PotionItem::getPrintStats(Being* being) {
     if (hp > 0 && stamina > 0) {
         return tcod::stringf("HP+%u ST+%u", (int)hp,(int)stamina);
     }

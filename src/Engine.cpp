@@ -13,7 +13,7 @@
 
 static const int FOV_RADIUS = 10;
 
-Engine::Engine(int screenWidthCells, int screenHeightCells, tcod::Console* console, tcod::Context* context) : screenWidthCells(screenWidthCells), screenHeightCells(screenHeightCells), state(INPUT), fovRadius(FOV_RADIUS), currentMapId(0), console(console), context(context) {
+Engine::Engine(int screenWidthCells, int screenHeightCells, tcod::Console* console, tcod::Context* context) : screenWidthCells(screenWidthCells), screenHeightCells(screenHeightCells), state(INPUT), fovRadius(FOV_RADIUS), currentMapId(-1), console(console), context(context) {
 }
 
 Engine::~Engine() {
@@ -35,7 +35,6 @@ void Engine::start() {
         float currentTime = static_cast<float>(currentTimeMs) / 1000.f;
         float deltaTime = timer.sync(fps);
         while (SDL_PollEvent(&event)) {
-            context->convert_event_coordinates(event);
             switch (event.type)
             {
                 case SDL_QUIT:
@@ -45,8 +44,17 @@ void Engine::start() {
                     input.mouseCellX = event.motion.x;
                     input.mouseCellY = event.motion.y;
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        input.lmbDown = true;
+                    }
+                    break;
+                case SDL_MOUSEBUTTONUP:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        input.lmbUp = true;
+                    }
+                    break;
                 case SDL_KEYDOWN:
-                // сохранять сканкоды, в GUI воспользоваться функцией конвертации в кейкод
                     input.anyKeyPressed = true;
                     input.keysPressed[event.key.keysym.scancode] = true;
                     if (event.key.keysym.sym == SDLK_LSHIFT) {
@@ -67,6 +75,8 @@ void Engine::start() {
         }
         update();
         render();
+        input.lmbUp = false;
+        input.lmbDown = false;
     }
 }
 
@@ -203,11 +213,11 @@ void Engine::toNextMap() {
         this->map->exit(player);
     }
     Map* map = nullptr;
-    if (maps.size() == currentMapId) {
+    if (maps.size() -1 == currentMapId) {
         map = newMap(player->being->lvl);
         maps.push(map);
     } else {
-        map = maps.get(currentMapId);
+        map = maps.get(currentMapId + 1);
     }
     map->enterFromUp(player);
     currentMapId++;
@@ -215,11 +225,11 @@ void Engine::toNextMap() {
 }
 
 void Engine::toPreviousMap() {
-    this->map->exit(player);
     if (currentMapId == 0) {
         gui->message(Color::purple, "Coward!");
         return;
     }
+    this->map->exit(player);
     currentMapId--;
     Map* map = maps.get(currentMapId);
     map->enterFromDown(player);
@@ -240,9 +250,4 @@ void Engine::initMap(Map* map) {
 
 Map* Engine::newMap(int lvl) {
     return map = MapGenerator::generate(lvl, screenWidthCells - GUI::GUI_WIDTH, screenHeightCells);
-}
-
-bool Engine::isCharacterKey(SDL_Keycode keycode) {
-    // Check if the keycode corresponds to a printable ASCII character
-    return (keycode >= SDLK_SPACE && keycode <= SDLK_z);
 }

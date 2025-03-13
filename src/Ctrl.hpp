@@ -18,4 +18,8 @@ class Ctrl {
         static const SDL_Scancode USE2 = SDL_SCANCODE_I;
         static const SDL_Scancode USE3 = SDL_SCANCODE_O;
         static const SDL_Scancode USE4 = SDL_SCANCODE_P;
+        static const SDL_Scancode INCREASE_STRENGTH = SDL_SCANCODE_V;
+        static const SDL_Scancode INCREASE_HEALTH = SDL_SCANCODE_B;
+        static const SDL_Scancode INCREASE_AGILITY = SDL_SCANCODE_N;
+        static const SDL_Scancode INCREASE_ENDURANCE = SDL_SCANCODE_M;
 };

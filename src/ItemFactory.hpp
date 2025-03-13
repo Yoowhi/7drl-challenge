@@ -20,7 +20,8 @@ class ItemFactory {
         static Entity* createChestItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity);
         static Entity* createGlovesItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity);
         static Entity* createBootsItem(int lvl, int x, int y, ItemFactory::Metal metal, EquipmentItem::Rarity rarity);
-        static Entity* _createTestingWeapon(int lvl, int x, int y);
+        static Entity* _createTestingWeapon(int lvl);
+        static Entity* _createTestingArmor(int lvl);
 
         static Entity* createPotionItem(int lvl, int x, int y);
         static Entity* createHealthPotionItem(int lvl, int x, int y);
@@ -29,7 +30,8 @@ class ItemFactory {
 
     private:
         static EquipmentItem::Rarity getRandomEquipmentRarity();
-        static int getRarityLvlModifier(EquipmentItem::Rarity rarity);
+        static float getRarityModifier(EquipmentItem::Rarity rarity);
+        static float modifyStat(float value, int lvl, EquipmentItem::Rarity rarity);
         static Metal getMetal(int level);
 
 };

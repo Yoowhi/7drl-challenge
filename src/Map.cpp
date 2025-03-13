@@ -44,3 +44,12 @@ Tile* Map::getTile(int x, int y) {
     }
     return &tiles[x + y * width];
 }
+
+// When being dies it moves to beginning of the list to render underneath everything else
+void Map::moveEntityToListBegin(Entity* entity) {
+    if (entities.contains(entity)) {
+        entities.remove(entity);
+        entities.insertBefore(entity, 0);
+    }
+    throw "Entity not found in the list";
+}

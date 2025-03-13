@@ -25,6 +25,8 @@ class Engine {
             int mouseCellX = 0;
             int mouseCellY = 0;
             bool shift = false;
+            bool lmbUp = false;
+            bool lmbDown = false;
         } input;
 
 
@@ -59,7 +61,6 @@ class Engine {
         void toPreviousMap();
         void initMap(Map* map);
         Map* newMap(int lvl);
-        bool isCharacterKey(SDL_Keycode keycode);
 };
 
 extern Engine* engine;

@@ -22,7 +22,7 @@ static const tcod::ColorRGB STAMINA_BACKGROUND_COLOR = Color::darkerGreen;
 static const tcod::ColorRGB XP_COLOR = Color::darkSky;
 static const tcod::ColorRGB XP_BACKGROUND_COLOR = Color::darkerSky;
 
-static const int BARS_HEIGHT = 5;
+static const int BARS_HEIGHT = 7;
 static const int STATS_HEIGHT = 10;
 static const int EQUIPMENT_HEIGHT = 10;
 static const int INVENTORY_HEIGHT = Container::CONTAINER_SIZE + 2;
@@ -67,7 +67,7 @@ void GUI::render() {
 
 
     renderMouseLook();
-    //renderDebug();
+    renderDebug();
 
     tcod::blit(*engine->console->get(), *console->get(), {engine->screenWidthCells - GUI_WIDTH, 0});
 }
@@ -83,8 +83,9 @@ void GUI::renderBorders() {
 }
 
 void GUI::renderBars(){
-    drawBar(2, BARS_Y + 1, GUI_WIDTH - 3, (int)engine->player->being->hp, (int)engine->player->being->getMaxHp(), Color::darkRed, Color::darkestRed);
-    drawBar(2, BARS_Y + 3, GUI_WIDTH - 3, (int)engine->player->being->stamina, (int)engine->player->being->getMaxStamina(), Color::darkGreen, Color::darkestGreen);
+    drawBar(2, BARS_Y + 1, GUI_WIDTH - 3, engine->player->being->hp, engine->player->being->getMaxHp(), Color::darkRed, Color::darkestRed);
+    drawBar(2, BARS_Y + 3, GUI_WIDTH - 3, engine->player->being->stamina, engine->player->being->getMaxStamina(), Color::darkGreen, Color::darkestGreen);
+    drawBar(2, BARS_Y + 5, GUI_WIDTH - 3, engine->player->being->defense, engine->player->being->getMaxDefense(), Color::darkYellow, Color::darkestYellow);
 }
 
 void GUI::renderStats(){
@@ -92,9 +93,17 @@ void GUI::renderStats(){
     drawStat(2, STATS_Y + 2, GUI_WIDTH - 6, "HEALTH", tcod::stringf("%u", engine->player->being->health));
     drawStat(2, STATS_Y + 3, GUI_WIDTH - 6, "AGILITY", tcod::stringf("%u", engine->player->being->agility));
     drawStat(2, STATS_Y + 4, GUI_WIDTH - 6, "ENDURANCE", tcod::stringf("%u", engine->player->being->endurance));
-    drawStat(2, STATS_Y + 6, GUI_WIDTH - 4, tcod::stringf("LVL: %u", engine->player->being->lvl), tcod::stringf("DEPTH: %u", engine->currentMapId + 1));
+    drawStat(2, STATS_Y + 6, GUI_WIDTH - 4, tcod::stringf("LVL: %u", engine->player->being->lvl), tcod::stringf("POINTS: %u", engine->player->being->attributePoints));
     tcod::print(*console->get(), {2, STATS_Y + 8}, tcod::stringf("XP"), Color::white, std::nullopt);
     drawBar(5, STATS_Y + 8, GUI_WIDTH - 6, engine->player->being->xp, engine->player->being->getMaxXp(), Color::darkSky, Color::darkestSky);
+
+    if (engine->player->being->attributePoints > 0) {
+        Engine* eng = engine;
+        button(GUI_WIDTH - 2, STATS_Y + 1, [eng]() { eng->player->being->incrementStrength(); });
+        button(GUI_WIDTH - 2, STATS_Y + 2, [eng]() { eng->player->being->incrementHealth(); });
+        button(GUI_WIDTH - 2, STATS_Y + 3, [eng]() { eng->player->being->incrementAgility(); });
+        button(GUI_WIDTH - 2, STATS_Y + 4, [eng]() { eng->player->being->incrementEndurance(); });
+    }
 }
 
 void GUI::renderEquipment() {
@@ -102,51 +111,41 @@ void GUI::renderEquipment() {
 
     EquipmentItem* weapon = equipment.getItem(EquipmentItem::WEAPON);
     if (weapon) {
-        drawStat(2, EQUIPMENT_Y + 1, GUI_WIDTH - 4, tcod::stringf("WEAPON - %s", weapon->owner->name), weapon->getPrintMainStat(engine->player->being));
+        drawStat(2, EQUIPMENT_Y + 1, GUI_WIDTH - 4, tcod::stringf("WEAPON - %s", weapon->owner->name), weapon->getPrintStats(engine->player->being));
     } else {
         tcod::print(*console->get(), {2, EQUIPMENT_Y + 1}, tcod::stringf("WEAPON - "), Color::white, std::nullopt);
     }
 
     EquipmentItem* head = equipment.getItem(EquipmentItem::HELMET);
     if (head) {
-        drawStat(2, EQUIPMENT_Y + 2, GUI_WIDTH - 4, tcod::stringf("HEAD   - %s", head->owner->name), head->getPrintMainStat(engine->player->being));
+        drawStat(2, EQUIPMENT_Y + 2, GUI_WIDTH - 4, tcod::stringf("HEAD   - %s", head->owner->name), head->getPrintStats(engine->player->being));
     } else {
         tcod::print(*console->get(), {2, EQUIPMENT_Y + 2}, tcod::stringf("HEAD   - "), Color::white, std::nullopt);
     }
 
     EquipmentItem* chest = equipment.getItem(EquipmentItem::CHEST);
     if (chest) {
-        drawStat(2, EQUIPMENT_Y + 3, GUI_WIDTH - 4, tcod::stringf("CHEST  - %s", chest->owner->name), chest->getPrintMainStat(engine->player->being));
+        drawStat(2, EQUIPMENT_Y + 3, GUI_WIDTH - 4, tcod::stringf("CHEST  - %s", chest->owner->name), chest->getPrintStats(engine->player->being));
     } else {
         tcod::print(*console->get(), {2, EQUIPMENT_Y + 3}, tcod::stringf("CHEST  - "), Color::white, std::nullopt);
     }
 
     EquipmentItem* gloves = equipment.getItem(EquipmentItem::GLOVES);
     if (gloves) {
-        drawStat(2, EQUIPMENT_Y + 4, GUI_WIDTH - 4, tcod::stringf("GLOVES - %s", gloves->owner->name), gloves->getPrintMainStat(engine->player->being));
+        drawStat(2, EQUIPMENT_Y + 4, GUI_WIDTH - 4, tcod::stringf("GLOVES - %s", gloves->owner->name), gloves->getPrintStats(engine->player->being));
     } else {
         tcod::print(*console->get(), {2, EQUIPMENT_Y + 4}, tcod::stringf("GLOVES - "), Color::white, std::nullopt);
     }
 
     EquipmentItem* boots = equipment.getItem(EquipmentItem::BOOTS);
     if (boots) {
-        drawStat(2, EQUIPMENT_Y + 5, GUI_WIDTH - 3, tcod::stringf("BOOTS  - %s", boots->owner->name), boots->getPrintMainStat(engine->player->being));
+        drawStat(2, EQUIPMENT_Y + 5, GUI_WIDTH - 4, tcod::stringf("BOOTS  - %s", boots->owner->name), boots->getPrintStats(engine->player->being));
     } else {
         tcod::print(*console->get(), {2, EQUIPMENT_Y + 5}, tcod::stringf("BOOTS  - "), Color::white, std::nullopt);
     }
 
-    drawStat(2, EQUIPMENT_Y + 7, GUI_WIDTH - 4, "DEFENSE: ", tcod::stringf("%d", engine->player->being->getDefense()));
-    std::string dmgString;
-    if (weapon) {
-        dmgString = weapon->getPrintMainStat(engine->player->being);
-    } else {
-        int minDamage, maxDamage;
-        float mult = engine->player->being->getDamageMultiplier();
-        minDamage = engine->player->being->getMinHandDamage() * mult;
-        maxDamage = engine->player->being->getMaxHandDamage() * mult;
-        dmgString = tcod::stringf("%d-%d", minDamage, maxDamage);
-    }
-    drawStat(2, EQUIPMENT_Y + 8, GUI_WIDTH - 4, "ATTACK: ", dmgString);
+    drawStat(2, EQUIPMENT_Y + 7, GUI_WIDTH - 4, "DEFENSE: ", tcod::stringf("%d", engine->player->being->getMaxDefense()));
+    drawStat(2, EQUIPMENT_Y + 8, GUI_WIDTH - 4, "ATTACK: ", weapon->getPrintStats(engine->player->being));
 }
 
 void GUI::renderInventory() {
@@ -156,7 +155,7 @@ void GUI::renderInventory() {
             auto& tile = console->at({2, INVENTORY_Y + 1 + i});
             tile.ch = itemNumberToKeycode(i);
             tile.fg = KEY_COLOR;
-            drawStat(4, INVENTORY_Y + 1 + i, GUI_WIDTH - 6, tcod::stringf(item->owner->name), item->getPrintMainStat(engine->player->being));
+            drawStat(4, INVENTORY_Y + 1 + i, GUI_WIDTH - 6, tcod::stringf(item->owner->name), item->getPrintStats(engine->player->being));
         }
     }
 }
@@ -190,6 +189,9 @@ void GUI::renderMessages() {
                 return;
             }
         }
+        if (isFilled) {
+            return;
+        }
         tcod::print_rect(*console->get(), {1, MESSAGES_Y + y, GUI_WIDTH - 1, rows}, message->text, message->color, std::nullopt);
         y += rows;
         if ( colorCoef > colorStep ) {
@@ -199,18 +201,15 @@ void GUI::renderMessages() {
 }
 
 void GUI::renderDebug() {
-
-    // console->setDefaultForeground(Color::white);
-    // console->print(0, 7, "%u", TCODSystem::getFps());
-    // console->print(6, 7, "%u:%u", engine->controls_mouseCellX, engine->controls_mouseCellY);
-    // console->print(16, 7, "%u:%u", engine->controls_mouseCellX, engine->controls_mouseCellY);
-    // int windowWidth, windowHeight;
-    // TCODSystem::getCurrentResolution(&windowWidth, &windowHeight);
-    // console->print(26, 7, "%u:%u", windowWidth, windowHeight);
+    drawDebugString(tcod::stringf("%u:%u", engine->input.mouseCellX, engine->input.mouseCellY), 0);
+    auto window = engine->context->get_sdl_window();
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    drawDebugString(tcod::stringf("%u:%u", w, h), 10);
 }
 
-void debugString(std::string str, int x) {
-    tcod::print(*engine->console->get(), {x, 0}, str, Color::green, Color::black);
+void GUI::drawDebugString(std::string str, int x) {
+    tcod::print(*console->get(), {x, engine->screenHeightCells - 1}, str, Color::green, Color::black);
 }
 
 void GUI::message(const tcod::ColorRGB &color, std::string text) {
@@ -262,16 +261,36 @@ void GUI::drawBar(
     const tcod::ColorRGB& backColor
 ) {
     tcod::draw_rect(*console->get(), {x, y, width, 1}, 0, std::nullopt, backColor, TCOD_BKGND_SET);
-    int barWidth = (int)(value / maxValue * width);
+    int barWidth = (int)(value / maxValue * (float)width);
     if (barWidth > 0) {
         tcod::draw_rect(*console->get(), {x, y, barWidth, 1}, 0, std::nullopt, barColor, TCOD_BKGND_SET);
     }
     if (value >= 0 && maxValue >= 0) {
-        tcod::print_rect(*console->get(), {x, y, width, 1}, tcod::stringf("%g/%g", value, maxValue), Color::white,std::nullopt, TCOD_alignment_t::TCOD_CENTER);
+        tcod::print_rect(*console->get(), {x, y, width, 1}, tcod::stringf("%u/%u", (int)value, (int)maxValue), Color::white,std::nullopt, TCOD_alignment_t::TCOD_CENTER);
     }
 }
 
 void GUI::drawStat(int x, int y, int w, std::string onLeft, std::string onRight) {
     tcod::print(*console->get(), {x, y}, onLeft, Color::white, std::nullopt);
     tcod::print(*console->get(), {x + w, y}, onRight, Color::white, std::nullopt, TCOD_alignment_t::TCOD_RIGHT);
+}
+
+template<typename Func>
+void GUI::button(int x, int y, Func onClick) {
+    auto& place = console->at({x, y});
+    place.fg = Color::gold;
+    place.ch = '+';
+    int guiX = engine->input.mouseCellX - (engine->screenWidthCells - GUI_WIDTH);
+    if (guiX != x || engine->input.mouseCellY != y) {
+        place.bg = Color::darkGrey;
+        return;
+    }
+    if (engine->input.lmbUp) {
+        place.bg = Color::darkGrey;
+        onClick();
+    } else if (engine->input.lmbDown) {
+        place.bg = Color::darkerGrey;
+    } else {
+        place.bg = Color::grey;
+    }
 }

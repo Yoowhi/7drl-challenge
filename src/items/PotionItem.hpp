@@ -12,5 +12,5 @@ class PotionItem : public Item {
         PotionItem(Entity* owner);
 
         Action* use(Entity* user);
-        std::string getPrintMainStat(Being* being);
+        std::string getPrintStats(Being* being);
 };

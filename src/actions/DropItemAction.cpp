@@ -5,6 +5,8 @@
 #include "../Map.hpp"
 #include "../Item.hpp"
 #include "../Being.hpp"
+#include "../GUI.hpp"
+#include "../colors.h"
 
 DropItemAction::DropItemAction(Entity* actor, Item* item) : Action(actor, 100), item(item) {}
 
@@ -13,5 +15,6 @@ void DropItemAction::execute() {
     item->owner->x = actor->x;
     item->owner->y = actor->y;
     engine->map->entities.push(item->owner);
-    actor->being->restoreStamina(this->time);
+    engine->gui->message(Color::lightestBlue, tcod::stringf("%s dropped %s", actor->name, item->owner->name));
+    actor->being->restoreStats(this->time);
 }
